@@ -1,9 +1,6 @@
 package tn.esprit.pidev.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.Date;
@@ -20,6 +17,14 @@ public class Transaction {
     private Date date;
     private float amount;
     private long id_investment;
-    private long id_loan;
+    //private long id_loan;
     private String description;
+    @ManyToOne
+    @JoinColumn(name = "id_loan")  // Associe la transaction à un prêt
+    private Loan loan;  // Le prêt lié à la transaction
+
+    @ManyToOne
+    @JoinColumn(name = "investment_id")  // Associe la transaction à un investissement
+    private Investment investment;  // L'investissement lié à la transaction
+
 }

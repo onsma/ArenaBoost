@@ -1,9 +1,6 @@
 package tn.esprit.pidev.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
 @AllArgsConstructor
@@ -18,4 +15,7 @@ public class Supporter {
     private long id_supporter;
     private String phone_number;
     private String favourite_club;
+    @OneToOne
+    @JoinColumn(name = "id_user", nullable = false)
+    private User user;
 }

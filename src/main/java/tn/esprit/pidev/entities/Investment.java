@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.Date;
+import java.util.List;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
@@ -54,4 +56,7 @@ public class Investment {
 
     @Column(name = "updated_at")
     Date updatedAt;
+
+    @OneToMany(mappedBy = "investment")  // Un investissement peut avoir plusieurs transactions
+    private List<Transaction> transactions;
 }

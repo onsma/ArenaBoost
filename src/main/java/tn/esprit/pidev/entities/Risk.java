@@ -1,9 +1,6 @@
 package tn.esprit.pidev.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.Date;
@@ -23,5 +20,8 @@ public class Risk {
     private Date last_date;
     private Description description;
     private RiskType risktype;
-    private long loan_id;
+    //private long loan_id;
+    @OneToOne
+    @JoinColumn(name = "id_loan")  // Une colonne qui lie le prêt au risque
+    private Loan loan;  // Le prêt auquel ce risque est associé
 }

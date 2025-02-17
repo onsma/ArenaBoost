@@ -1,9 +1,6 @@
 package tn.esprit.pidev.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
 @AllArgsConstructor
@@ -21,4 +18,7 @@ public class Investor {
     private String profil_picture;
     private String CV;
     private String risk_tolerance;
+    @OneToOne
+    @JoinColumn(name = "id_user", nullable = false)
+    private User user;
 }

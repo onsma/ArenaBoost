@@ -1,12 +1,11 @@
 package tn.esprit.pidev.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.Date;
+import java.util.List;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
@@ -23,4 +22,9 @@ public class Athlete {
     private String profil_picture;
     private String phone_number;
     private String CV;
+    @OneToOne
+    @JoinColumn(name = "id_user", nullable = false)
+    private User user;
+    @OneToMany(mappedBy = "athlete")
+    private List<Loan> loans; // Liste des prêts liés à cet utilisateur
 }

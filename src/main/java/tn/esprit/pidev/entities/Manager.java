@@ -1,9 +1,6 @@
 package tn.esprit.pidev.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
 @AllArgsConstructor
@@ -22,4 +19,7 @@ public class Manager {
     private String description;
     private   String financial_status;
     private String email_club;
+    @OneToOne
+    @JoinColumn(name = "id_user", nullable = false)
+    private User user;  // Relation avec User
 }

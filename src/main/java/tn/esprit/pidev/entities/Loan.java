@@ -1,10 +1,10 @@
 package tn.esprit.pidev.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.List;
+import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -20,5 +20,11 @@ public class Loan {
     private float interest_rate;
     private int refund_duration;
     private Status status;
-    private int id_user;
+    //private int id_user;
+    @ManyToOne
+    @JoinColumn(name = "id_athelte")
+    private Athlete athlete; // L'utilisateur qui a demandé ou financé le prêt
+
+    @OneToMany(mappedBy = "loan")  // Un prêt peut avoir plusieurs transactions
+    private List<Transaction> transactions;  // Liste des transactions associées au prêt
 }

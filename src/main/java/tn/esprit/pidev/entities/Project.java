@@ -1,9 +1,6 @@
 package tn.esprit.pidev.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jdk.jfr.Category;
 import lombok.*;
 
@@ -24,7 +21,15 @@ public class Project {
     private category category;
     private float goal_amount;
     private float current_amount;
-    private long id_manager;
-    private long id_supoorter;
+    //private long id_manager;
+    //private long id_supoorter;
     private Date deadline;
+
+    @ManyToOne
+    @JoinColumn(name = "id_manager")
+    private Manager manager;  // Un projet appartient à un manager
+
+    @ManyToOne
+    @JoinColumn(name = "id_supporter", nullable = true)
+    private Supporter supporter;  // Un supporter peut aussi financer un projet
 }
