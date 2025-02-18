@@ -1,6 +1,6 @@
 # ArenaBoost
 microfinance platform
-# 🌟 Microfinance & Microcredit Platform
+# 🌟 Microfinance & MicroInsurance Platform
 
 ## 📌 Overview
 This microfinance platform is designed to facilitate **microloans, investments, creating projects, tailoring insurance, user and risk management** for clubs and athletes. It enables investors to fund clubs or players while integrating **risk prediction, fund management, and credit allocation**.
