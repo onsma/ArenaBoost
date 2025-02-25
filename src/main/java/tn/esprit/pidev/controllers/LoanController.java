@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tn.esprit.pidev.entities.Loan;
 import tn.esprit.pidev.services.LoanService;
+import tn.esprit.pidev.services.MailService;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,11 +15,12 @@ import java.util.Optional;
 public class LoanController {
 
     private final LoanService loanService;
-
+    private final MailService mailService; // Activation du mailing
 
     @Autowired
-    public LoanController(LoanService loanService) {
+    public LoanController(LoanService loanService, MailService mailService) {
         this.loanService = loanService;
+        this.mailService = mailService;
     }
 
     @PostMapping("/{id_user}")
@@ -43,17 +45,19 @@ public class LoanController {
         return ResponseEntity.ok(loans);
     }
 
-
     @PutMapping("/{id}")
     public ResponseEntity<?> updateLoan(@PathVariable Long id, @RequestBody Loan loanDetails) {
         try {
             Loan updatedLoan = loanService.updateLoan(id, loanDetails);
+
+            // 📩 Envoi automatique d'un e-mail après mise à jour du prêt
+            mailService.envoyerNotificationLoan(updatedLoan);
+
             return ResponseEntity.ok(updatedLoan);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
-
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteLoan(@PathVariable Long id) {

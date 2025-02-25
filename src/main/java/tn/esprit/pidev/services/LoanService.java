@@ -1,5 +1,6 @@
 package tn.esprit.pidev.services;
 
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tn.esprit.pidev.entities.Loan;
@@ -15,24 +16,26 @@ public class LoanService {
 
     private final LoanRepository loanRepository;
     private final UserRepository userRepository;
+    private final MailService mailService;  // Ajout du service d'e-mail
 
     @Autowired
-    public LoanService(LoanRepository loanRepository, UserRepository userRepository) {
+    public LoanService(LoanRepository loanRepository, UserRepository userRepository, MailService mailService) {
         this.loanRepository = loanRepository;
         this.userRepository = userRepository;
+        this.mailService = mailService;
     }
 
+    @Transactional
     public Loan createLoan(Loan loan, Long userId) {
         Optional<User> userOptional = userRepository.findById(userId);
 
-        if (userOptional.isEmpty()) { // Utilisation correcte de Optional
+        if (userOptional.isEmpty()) {
             throw new RuntimeException("L'utilisateur lié au prêt n'existe pas !");
         }
 
-        loan.setUser(userOptional.get()); // Associer l'utilisateur au prêt
-        return loanRepository.save(loan); // Enregistrer le prêt
+        loan.setUser(userOptional.get());
+        return loanRepository.save(loan);
     }
-
 
     public Optional<Loan> getLoanById(Long id) {
         return loanRepository.findById(id);
@@ -42,6 +45,7 @@ public class LoanService {
         return loanRepository.findAll();
     }
 
+    @Transactional
     public Loan updateLoan(Long id, Loan loanDetails) {
         return loanRepository.findById(id).map(existingLoan -> {
             existingLoan.setAmount(loanDetails.getAmount());
@@ -49,10 +53,17 @@ public class LoanService {
             existingLoan.setInterest_rate(loanDetails.getInterest_rate());
             existingLoan.setRefund_duration(loanDetails.getRefund_duration());
             existingLoan.setStatus(loanDetails.getStatus());
-            return loanRepository.save(existingLoan);
-        }).orElse(null);
+
+            Loan updatedLoan = loanRepository.save(existingLoan);
+
+            // 📩 Envoi automatique d'un e-mail au demandeur du prêt
+            mailService.envoyerNotificationLoan(updatedLoan);
+
+            return updatedLoan;
+        }).orElseThrow(() -> new RuntimeException("Prêt non trouvé avec l'ID : " + id));
     }
 
+    @Transactional
     public boolean deleteLoan(Long id) {
         if (loanRepository.existsById(id)) {
             loanRepository.deleteById(id);
