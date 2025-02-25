@@ -16,9 +16,10 @@ public class Athlete {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id_athelete;
+    private String athleteName;
     private Date birthDate;
     private String sexe;
-    private String sport;
+    private String sportType;
     private String profil_picture;
     private String phone_number;
     private String CV;
@@ -27,4 +28,5 @@ public class Athlete {
     private User user;
     @OneToMany(mappedBy = "athlete")
     private List<Loan> loans; // Liste des prêts liés à cet utilisateur
+
 }

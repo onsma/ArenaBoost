@@ -10,15 +10,34 @@ import lombok.*;
 @Getter
 @Entity
 public class Manager {
+
+
+
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id_manager;
-    private String club_name;
-    private String sport_type;
-    private String club_logo;
+    @Column(name = "id_manager")
+    private long idManager;
+
+    @Column(name = "manager_name")  // Updated field name
+    private String managerName;
+
+    @Column(name = "sport")
+    private String sport;
+
+    @Column(name = "club_logo")
+    private String clubLogo;
+
+    @Column(name = "description")
     private String description;
-    private   String financial_status;
-    private String email_club;
+
+    @Column(name = "financial_status")  // Updated field name
+    private String financialStatus;
+
+    @Column(name = "email_club")
+    private String emailClub;
+
+
     @OneToOne
     @JoinColumn(name = "id_user", nullable = false)
     private User user;  // Relation avec User
