@@ -3,6 +3,7 @@ package tn.esprit.pidev.services;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import tn.esprit.pidev.dto.LoanStatisticsDTO;
 import tn.esprit.pidev.entities.Loan;
 import tn.esprit.pidev.entities.User;
 import tn.esprit.pidev.repositories.LoanRepository;
@@ -70,5 +71,19 @@ public class LoanService {
             return true;
         }
         return false;
+    }
+
+    public LoanStatisticsDTO getLoanStatistics() {
+        List<Loan> allLoans = loanRepository.findAll();
+
+        long totalLoans = allLoans.size();
+        double totalAmount = allLoans.stream().mapToDouble(Loan::getAmount).sum();
+        double averageDuration = allLoans.stream().mapToDouble(Loan::getRefund_duration).average().orElse(0);
+
+        long pendingLoans = allLoans.stream().filter(loan -> loan.getStatus().name().equalsIgnoreCase("PENDING")).count();
+        long approvedLoans = allLoans.stream().filter(loan -> loan.getStatus().name().equalsIgnoreCase("APPROVED")).count();
+        long rejectedLoans = allLoans.stream().filter(loan -> loan.getStatus().name().equalsIgnoreCase("REJECTED")).count();
+
+        return new LoanStatisticsDTO(totalLoans, totalAmount, averageDuration, pendingLoans, approvedLoans, rejectedLoans);
     }
 }

@@ -1,11 +1,15 @@
 package tn.esprit.pidev.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import tn.esprit.pidev.dto.LoanStatisticsDTO;
 import tn.esprit.pidev.entities.Loan;
 import tn.esprit.pidev.services.LoanService;
 import tn.esprit.pidev.services.MailService;
+import tn.esprit.pidev.services.PdfService;
 
 import java.util.List;
 import java.util.Optional;
@@ -44,6 +48,19 @@ public class LoanController {
         List<Loan> loans = loanService.getAllLoans();
         return ResponseEntity.ok(loans);
     }
+    @Autowired
+    private PdfService pdfService;
+
+    // 📌 Endpoint pour télécharger le PDF de l'historique des prêts
+    @GetMapping("/{userId}/pdf")
+    public ResponseEntity<byte[]> getUserLoanHistoryPdf(@PathVariable Long userId) {
+        byte[] pdfBytes = pdfService.generateUserLoanHistory(userId);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=Historique_Pret.pdf")
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(pdfBytes);
+    }
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updateLoan(@PathVariable Long id, @RequestBody Loan loanDetails) {
@@ -63,5 +80,11 @@ public class LoanController {
     public ResponseEntity<Void> deleteLoan(@PathVariable Long id) {
         boolean deleted = loanService.deleteLoan(id);
         return deleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+    }
+    // ✅ Endpoint pour récupérer les statistiques des prêts
+    @GetMapping("/statistics")
+    public ResponseEntity<LoanStatisticsDTO> getLoanStatistics() {
+        LoanStatisticsDTO stats = loanService.getLoanStatistics();
+        return ResponseEntity.ok(stats);
     }
 }
