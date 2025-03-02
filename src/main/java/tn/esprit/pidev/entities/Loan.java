@@ -3,6 +3,7 @@ package tn.esprit.pidev.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @AllArgsConstructor
@@ -25,6 +26,10 @@ public class Loan {
 
     @Enumerated(EnumType.STRING)
     private Status status;
+
+
+    @Column(nullable = false, updatable = false)
+    private LocalDate requestDate;
 
     @ManyToOne
     @JoinColumn(name = "id_user", nullable = false)

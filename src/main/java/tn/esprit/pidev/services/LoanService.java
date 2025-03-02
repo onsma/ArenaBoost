@@ -9,6 +9,7 @@ import tn.esprit.pidev.entities.User;
 import tn.esprit.pidev.repositories.LoanRepository;
 import tn.esprit.pidev.repositories.UserRepository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,7 +36,9 @@ public class LoanService {
         }
 
         loan.setUser(userOptional.get());
+        loan.setRequestDate(LocalDate.now());
         return loanRepository.save(loan);
+
     }
 
     public Optional<Loan> getLoanById(Long id) {
