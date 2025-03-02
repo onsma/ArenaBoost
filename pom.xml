@@ -5,16 +5,20 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.2.3</version> <!-- Version stable, compatible avec Java 21 -->
+        <version>3.2.3</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.example.project</groupId> <!-- Corrigé pour respecter les conventions (minuscules) -->
-    <artifactId>project-backend</artifactId> <!-- Corrigé pour homogénéité -->
+    <groupId>com.example.project</groupId>
+    <artifactId>project-backend</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>Project-Backend</name>
     <description>Project Backend Application</description>
     <properties>
         <java.version>21</java.version>
+        <lombok.version>1.18.30</lombok.version> <!-- Ajouté pour spécifier la version de Lombok -->
+        <spring-ai.version>1.0.0-RC1</spring-ai.version> <!-- Vérifiez si une version plus récente existe -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding> <!-- Force UTF-8 -->
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding> <!-- Force UTF-8 -->
     </properties>
     <dependencies>
         <!-- Spring Boot Starter pour JPA -->
@@ -40,6 +44,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version> <!-- Utilise la version définie -->
             <optional>true</optional>
         </dependency>
 
@@ -73,11 +78,19 @@
             <artifactId>layout</artifactId>
             <version>7.2.5</version>
         </dependency>
+
         <!-- Pour l'IA et les prédictions avec Weka (Java ML) -->
         <dependency>
             <groupId>nz.ac.waikato.cms.weka</groupId>
             <artifactId>weka-stable</artifactId>
             <version>3.8.6</version>
+        </dependency>
+
+        <!-- Nouvelle dépendance pour Spring AI avec Ollama -->
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-ollama-spring-boot-starter</artifactId>
+            <version>1.0.0-M5</version>
         </dependency>
 
         <!-- Ajout pour générer des QR codes -->
@@ -90,6 +103,12 @@
             <groupId>com.google.zxing</groupId>
             <artifactId>javase</artifactId>
             <version>3.5.3</version>
+        </dependency>
+
+        <dependency>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
+            <version>3.0.2</version>
         </dependency>
     </dependencies>
 
@@ -109,7 +128,7 @@
                 </configuration>
             </plugin>
 
-            <!-- Plugin Maven Compiler (facultatif si la version est gérée par spring-boot-starter-parent) -->
+            <!-- Plugin Maven Compiler avec encodage explicite -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -117,6 +136,7 @@
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
+                    <encoding>UTF-8</encoding> <!-- Force UTF-8 -->
                     <annotationProcessorPaths>
                         <path>
                             <groupId>org.projectlombok</groupId>
@@ -124,6 +144,16 @@
                             <version>${lombok.version}</version>
                         </path>
                     </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+
+            <!-- Plugin Maven Resources avec encodage explicite -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.3.1</version>
+                <configuration>
+                    <encoding>UTF-8</encoding> <!-- Force UTF-8 -->
                 </configuration>
             </plugin>
         </plugins>

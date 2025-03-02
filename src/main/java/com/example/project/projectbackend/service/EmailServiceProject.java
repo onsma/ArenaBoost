@@ -20,7 +20,7 @@ public class EmailServiceProject {
         message.setFrom("votre_email@gmail.com"); // Remplacez par votre adresse e-mail
         message.setTo(to);
         message.setSubject("Nouveau Projet Lancé : " + projectName);
-        message.setText("Bonjour,\n\nUn nouveau projet, " + projectName + ", a été lancé sur notre plateforme de crowdfunding.\n" +
+        message.setText("Bonjour,\n\nUn nouveau projet, " + projectName + ", a été lancé sur notre plateforme ArenaBoost.\n" +
                 "Consultez-le dès maintenant sur http://localhost:8089/project/retrieve-project/1\n\nCordialement,\nL'équipe Arena Boost");
 
         mailSender.send(message);

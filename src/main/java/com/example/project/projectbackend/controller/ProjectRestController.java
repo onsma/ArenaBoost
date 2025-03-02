@@ -1,10 +1,11 @@
 package com.example.project.projectbackend.controller;
 
 import com.example.project.projectbackend.entity.ProjectAnalytics;
-import com.example.project.projectbackend.entity.Contribution;
 import com.example.project.projectbackend.entity.ProjectPrediction;
+import com.example.project.projectbackend.entity.Contribution;
 import com.example.project.projectbackend.entity.Event;
 import com.example.project.projectbackend.entity.Project;
+import com.example.project.projectbackend.service.ChatbotProjectService;
 import com.example.project.projectbackend.service.IProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -100,5 +101,15 @@ public class ProjectRestController {
     @GetMapping("/{project-id}/predict-outcome")
     public ProjectPrediction predictProjectOutcome(@PathVariable("project-id") Integer projectId) {
         return projectService.predictProjectOutcome(projectId);
+    }
+
+    @GetMapping("/{project-id}/chat")
+    public ResponseEntity<String> getChatResponse(@PathVariable("project-id") Integer projectId, @RequestParam String question) {
+        try {
+            String response = chatbotProjectService.getProjectResponse(projectId, question);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Erreur lors de la réponse du chatbot : " + e.getMessage());
+        }
     }
 }
