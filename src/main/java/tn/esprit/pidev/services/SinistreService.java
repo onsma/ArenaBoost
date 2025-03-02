@@ -7,6 +7,7 @@ import tn.esprit.pidev.entities.Sinistre;
 import tn.esprit.pidev.exception.ResourceNotFoundException;
 import tn.esprit.pidev.repositories.InsuranceRepository;
 import tn.esprit.pidev.repositories.SinistreRepository;
+import tn.esprit.pidev.utils.FileStorageService;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,30 +20,22 @@ public class SinistreService {
     private SinistreRepository sinistreRepository;
     @Autowired
     private InsuranceRepository insuranceRepository;
+    @Autowired
+    private FileStorageService fileStorageService;
     public Sinistre createSinistreWithPicture(Sinistre sinistre, MultipartFile pictureFile) {
-        // Define the upload directory
-        String uploadDir = "C:\\wamp64\\www\\Uploads";
-        File uploadFolder = new File(uploadDir);
-        if (!uploadFolder.exists()) {
-            uploadFolder.mkdirs();
-        }
+        insuranceRepository.findById(sinistre.getId_insurance()).orElseThrow(() -> new ResourceNotFoundException("Insurance not found with id: " + sinistre.getId_insurance()));
 
-        // Create a unique file name using the current timestamp and original file name
+        // Generate a unique file name using current timestamp + original filename
         String originalFilename = pictureFile.getOriginalFilename();
         String newFilename = System.currentTimeMillis() + "_" + originalFilename;
-        File destination = new File(uploadFolder, newFilename);
-
         try {
-            // Save the file to disk
-            pictureFile.transferTo(destination);
+            // Use FileStorageService to store the file and return its path
+            String filePath = fileStorageService.storeFile(newFilename, pictureFile.getBytes());
+            // Set the absolute file path in the sinistre entity
+            sinistre.setPicture(filePath);
         } catch (IOException e) {
             throw new RuntimeException("Error saving file", e);
         }
-
-        // Set the absolute file path to the picture attribute
-        sinistre.setPicture(destination.getAbsolutePath());
-
-        // Save the Sinistre entity in the database
         return sinistreRepository.save(sinistre);
     }
     // Create

@@ -3,7 +3,9 @@ package tn.esprit.pidev.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tn.esprit.pidev.entities.Insurance;
+import tn.esprit.pidev.entities.User;
 import tn.esprit.pidev.repositories.InsuranceRepository;
+import tn.esprit.pidev.utils.EmailServiceInsurance;
 
 import java.util.List;
 
@@ -12,11 +14,23 @@ public class InsuranceService {
 
     @Autowired
     private InsuranceRepository insuranceRepository;
+    @Autowired
+    private EmailServiceInsurance emailServiceInsurance;
+
 
     // Create
     public Insurance createInsurance(Insurance insurance) {
-        // Additional business logic (eligibility checks, premium calc, etc.)
-        return insuranceRepository.save(insurance);
+        Insurance savedInsurance = insuranceRepository.save(insurance);
+
+        // 2. Check if user is present and has an email
+        User user = savedInsurance.getUser();
+        System.out.println("**************************************"+user);
+        if (user != null && user.getEmail() != null && !user.getEmail().isEmpty()) {
+            // 3. Send the email asynchronously
+            emailServiceInsurance.sendInsuranceEmail(user.getEmail(), savedInsurance);
+        }
+
+        return savedInsurance;
     }
 
     // Read all
