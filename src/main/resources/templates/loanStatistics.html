@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Statistiques des Prêts</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<h2>Statistiques des Prêts</h2>
+
+<canvas id="loanChart" width="400" height="200"></canvas>
+
+<script>
+    var ctx = document.getElementById('loanChart').getContext('2d');
+    var loanChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Total Prêts', 'Prêts en Attente', 'Approuvés', 'Rejetés'],
+            datasets: [{
+                label: 'Nombre de Prêts',
+                data: [
+                    [[${stats.totalLoans}]],
+                    [[${stats.pendingLoans}]],
+                    [[${stats.approvedLoans}]],
+                    [[${stats.rejectedLoans}]]
+                ],
+                backgroundColor: ['blue', 'orange', 'green', 'red']
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+
+</body>
+</html>
