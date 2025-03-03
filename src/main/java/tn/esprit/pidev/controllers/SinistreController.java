@@ -150,7 +150,7 @@ public class SinistreController {
 
             // 2) Build params (limit to 100 charges, etc.)
             ChargeListParams params = ChargeListParams.builder()
-                    .setLimit(2L)
+                    .setLimit(10L)
                     .build();
 
             // 3) Retrieve the charges
