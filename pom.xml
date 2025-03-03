@@ -68,6 +68,11 @@
             <artifactId>javax.mail-api</artifactId>
             <version>1.6.2</version> <!-- Or the latest version available -->
         </dependency>
+        <dependency>
+            <groupId>com.stripe</groupId>
+            <artifactId>stripe-java</artifactId>
+            <version>20.134.0</version>
+        </dependency>
 
     </dependencies>
 
