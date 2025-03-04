@@ -3,9 +3,11 @@ package tn.esprit.pidev.controller;
 
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import tn.esprit.pidev.entities.*;
+import tn.esprit.pidev.services.ExcelExportService;
 import tn.esprit.pidev.services.InvestmentService;
 import tn.esprit.pidev.services.InvestorService;
 import lombok.NoArgsConstructor;
@@ -13,13 +15,15 @@ import lombok.NoArgsConstructor;
 import org.springframework.core.env.Environment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.thymeleaf.TemplateEngine;
 import tn.esprit.pidev.entities.Investment;
 import tn.esprit.pidev.entities.Investor;
 import tn.esprit.pidev.services.InvestorService;
+
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
@@ -175,6 +179,31 @@ public class InvestmentController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/filter")
+    public List<Investment> filterInvestments(
+            @RequestParam(required = false) InvestmentType investmentType,
+            @RequestParam(required = false) Double minROI,
+            @RequestParam(required = false) Double maxROI,
+            @RequestParam(required = false) InvestmentStatus status,
+            @RequestParam(required = false) Double minAmount,
+            @RequestParam(required = false) Double maxAmount,
+            @RequestParam(required = false) DividendPaymentFrequency dividendPaymentFrequency,
+            @RequestParam(required = false) Double minDividendRate,
+            @RequestParam(required = false) Double maxDividendRate
+    ) {
+        return investmentService.findInvestmentsByCriteria(
+                investmentType,
+                minROI,
+                maxROI,
+                status,
+                minAmount,
+                maxAmount,
+                dividendPaymentFrequency,
+                minDividendRate,
+                maxDividendRate
+        );
+    }
+
     @PutMapping("/{id}/calculate-roi")
     public ResponseEntity<Investment> calculateAndUpdateROI(
             @PathVariable long id,
@@ -196,4 +225,54 @@ public class InvestmentController {
         List<Investment> investments = investmentService.getInvestmentWithROIForInvestor(investorId);
         return ResponseEntity.ok(investments);
     }
+
+    @Autowired
+    private ExcelExportService excelExportService;
+
+    @GetMapping("/export/excel")
+    public ResponseEntity<ByteArrayResource> exportInvestmentsToExcel() throws IOException {
+        // Fetch all investments
+        List<Investment> investments = investmentService.findAllInvestments();
+
+        // Generate Excel file
+        byte[] excelBytes = excelExportService.exportInvestmentsToExcel(investments);
+
+        // Set response headers
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=investments.xlsx");
+        headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_OCTET_STREAM_VALUE);
+
+        // Return the file as a downloadable response
+        return ResponseEntity.ok()
+                .headers(headers)
+                .contentLength(excelBytes.length)
+                .body(new ByteArrayResource(excelBytes));
+    }
+//
+//    @GetMapping("/export/excel/investor/{investorId}")
+//    public ResponseEntity<ByteArrayResource> exportInvestmentsByInvestorId(@PathVariable Long investorId) throws IOException {
+//        // Fetch investments for the specified investor
+//        List<Investment> investments = investmentService.findInvestmentsByInvestorId(investorId);
+//
+//        // Generate Excel file
+//        byte[] excelBytes = excelExportService.exportInvestmentsToExcel(investments);
+//
+//        // Optionally, save the file to a specific directory
+//        String filePath = "C:/exports/investor_" + investorId + "_investments.xlsx"; // Specify your directory here
+//        try (FileOutputStream fileOut = new FileOutputStream(filePath)) {
+//            fileOut.write(excelBytes);
+//        }
+//
+//        // Set response headers
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=investor_" + investorId + "_investments.xlsx");
+//        headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_OCTET_STREAM_VALUE);
+//
+//        // Return the file as a downloadable response
+//        return ResponseEntity.ok()
+//                .headers(headers)
+//                .contentLength(excelBytes.length)
+//                .body(new ByteArrayResource(excelBytes));
+//    }
+
 }

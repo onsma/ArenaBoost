@@ -1,27 +1,28 @@
 package tn.esprit.pidev.services;
 
-
-import jakarta.mail.internet.MimeMessage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Service;
+import tn.esprit.pidev.entities.Investment;
+import tn.esprit.pidev.entities.InvestmentStatus;
+import tn.esprit.pidev.entities.InvestmentType;
+import tn.esprit.pidev.entities.DividendPaymentFrequency;
+import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.stereotype.Service;
-import tn.esprit.pidev.entities.EmailDetails;
-import tn.esprit.pidev.entities.Investment;
-import tn.esprit.pidev.entities.Investor;
+import tn.esprit.pidev.entities.*;
 import tn.esprit.pidev.repository.InvestmentRepository;
-import tn.esprit.pidev.repository.InvestorRepository;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
-import java.io.File;
-import java.util.Date;
 import java.util.List;
 
 @Service
 public class InvestmentService implements IInvestmentService {
+
+    private static final Logger logger = LoggerFactory.getLogger(InvestmentService.class);
 
     @Autowired
     InvestmentRepository investmentRepository;
@@ -77,7 +78,7 @@ public class InvestmentService implements IInvestmentService {
                     + "<li><strong>Your Preferred Sport:</strong> " + investor.getPreferredSport() + "</li>"
                     + "<li><strong>Your Risk Tolerance:</strong> " + investor.getRiskTolerance() + "</li>"
                     + "<li><strong>Investment ID:</strong> " + investment.getInvestmentId() + "</li>"
-                    + "<li><strong>Amount:</strong> " + investment.getAmount() + "</li>"
+                    + "<li><strong>Amount:</strong> " + investment.getAmount() + "TND</li>"
                     + "<li><strong>Created At:</strong> " + investment.getCreatedAt() + "</li>"
                     + "</ul>"
                     + "<p>Best regards,<br>Your Investment Team</p>"
@@ -130,5 +131,87 @@ public class InvestmentService implements IInvestmentService {
     @Override
     public List<Investment> getInvestmentsByInvestorId(Long investorId){
         return investmentRepository.findByInvestor_Id(investorId);
+    }
+
+    @Override
+    public List<Investment> findInvestmentsByCriteria(
+            InvestmentType investmentType,
+            Double minROI,
+            Double maxROI,
+            InvestmentStatus status,
+            Double minAmount,
+            Double maxAmount,
+            DividendPaymentFrequency dividendPaymentFrequency,
+            Double minDividendRate,
+            Double maxDividendRate
+    ) {
+        logger.info("Filtering investments with criteria: investmentType={}, minROI={}, maxROI={}, status={}, minAmount={}, maxAmount={}, dividendPaymentFrequency={}, minDividendRate={}, maxDividendRate={}",
+                investmentType, minROI, maxROI, status, minAmount, maxAmount, dividendPaymentFrequency, minDividendRate, maxDividendRate);
+
+        Specification<Investment> spec = Specification.where(null);
+
+        if (investmentType != null) {
+            spec = spec.and((root, query, criteriaBuilder) ->
+                    criteriaBuilder.equal(root.get("investmentType"), investmentType));
+            logger.info("Applied filter: investmentType={}", investmentType);
+        }
+
+        if (minROI != null) {
+            spec = spec.and((root, query, criteriaBuilder) ->
+                    criteriaBuilder.greaterThanOrEqualTo(root.get("expectedROI"), minROI));
+            logger.info("Applied filter: minROI={}", minROI);
+        }
+
+        if (maxROI != null) {
+            spec = spec.and((root, query, criteriaBuilder) ->
+                    criteriaBuilder.lessThanOrEqualTo(root.get("expectedROI"), maxROI));
+            logger.info("Applied filter: maxROI={}", maxROI);
+        }
+
+        if (status != null) {
+            spec = spec.and((root, query, criteriaBuilder) ->
+                    criteriaBuilder.equal(root.get("status"), status));
+            logger.info("Applied filter: status={}", status);
+        }
+
+        if (minAmount != null) {
+            spec = spec.and((root, query, criteriaBuilder) ->
+                    criteriaBuilder.greaterThanOrEqualTo(root.get("amount"), minAmount));
+            logger.info("Applied filter: minAmount={}", minAmount);
+        }
+
+        if (maxAmount != null) {
+            spec = spec.and((root, query, criteriaBuilder) ->
+                    criteriaBuilder.lessThanOrEqualTo(root.get("amount"), maxAmount));
+            logger.info("Applied filter: maxAmount={}", maxAmount);
+        }
+
+        if (dividendPaymentFrequency != null) {
+            spec = spec.and((root, query, criteriaBuilder) ->
+                    criteriaBuilder.equal(root.get("dividendPaymentFrequency"), dividendPaymentFrequency));
+            logger.info("Applied filter: dividendPaymentFrequency={}", dividendPaymentFrequency);
+        }
+
+        if (minDividendRate != null) {
+            spec = spec.and((root, query, criteriaBuilder) ->
+                    criteriaBuilder.greaterThanOrEqualTo(root.get("dividendRate"), minDividendRate));
+            logger.info("Applied filter: minDividendRate={}", minDividendRate);
+        }
+
+        if (maxDividendRate != null) {
+            spec = spec.and((root, query, criteriaBuilder) ->
+                    criteriaBuilder.lessThanOrEqualTo(root.get("dividendRate"), maxDividendRate));
+            logger.info("Applied filter: maxDividendRate={}", maxDividendRate);
+        }
+
+        List<Investment> result = investmentRepository.findAll(spec);
+        logger.info("Found {} investments matching criteria", result.size());
+        return result;
+    }
+
+
+    @Override
+    public List<Investment> findInvestmentsByInvestorId(Long investorId) {
+        return investmentRepository.findByInvestor_Id(investorId); // Fetch investments by investor ID
     }
 }

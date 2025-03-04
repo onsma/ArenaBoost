@@ -5,33 +5,34 @@ import lombok.NoArgsConstructor;
 //import org.hibernate.cfg.Environment;
 import org.springframework.core.env.Environment;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.thymeleaf.TemplateEngine;
+import reactor.core.publisher.Flux;
 import tn.esprit.pidev.entities.Athlete;
 import tn.esprit.pidev.entities.Investment;
 import tn.esprit.pidev.entities.Investor;
 import tn.esprit.pidev.entities.Manager;
+import tn.esprit.pidev.services.ExcelExportService;
+import tn.esprit.pidev.services.InvestmentService;
 import tn.esprit.pidev.services.InvestorService;
-import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
-import java.util.Map;
-import jakarta.mail.MessagingException;
-import jakarta.mail.internet.InternetAddress;
-import jakarta.mail.internet.MimeMessage;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.thymeleaf.context.Context;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.List;
 
 
@@ -42,6 +43,13 @@ public class InvestorController {
 
     @Autowired
     private InvestorService investorService;
+
+    private ChatClient.Builder chatClientBuilder;
+
+    @Autowired
+    public InvestorController(ChatClient.Builder chatClientBuilder) {
+        this.chatClientBuilder = chatClientBuilder;
+    }
 
     // Create a new investor
     @PostMapping("/addInvestor")
@@ -91,6 +99,18 @@ public class InvestorController {
         }
 
         return ResponseEntity.ok(athletes);
+    }
+
+    @GetMapping("/spring-ai/prompt")
+    public Flux<String> promptResponse(@RequestParam("message") String message) {
+        // Build the chat client
+        ChatClient chatClient = chatClientBuilder.build();
+
+        // Send the message prompt and get the response
+        Flux<String> response = chatClient.prompt(message).stream().content();
+
+        // Return the response
+        return response;
     }
 
     // Search athletes by sport
@@ -143,6 +163,37 @@ public class InvestorController {
         }
 
         return ResponseEntity.ok(managers);
+    }
+    @Autowired
+    private ExcelExportService excelExportService;
+
+    @Autowired
+    private InvestmentService investmentService;
+
+    @GetMapping("/{investorId}/export/investments/excel")
+    public ResponseEntity<ByteArrayResource> exportInvestmentsByInvestorId(@PathVariable Long investorId) throws IOException {
+        // Fetch investments for the specified investor
+        List<Investment> investments = investmentService.getInvestmentsByInvestorId(investorId);
+
+        // Generate Excel file
+        byte[] excelBytes = excelExportService.exportInvestmentsToExcel(investments);
+
+        // Optionally, save the file to a specific directory
+        String filePath = "C:/exports/investor_" + investorId + "_investments.xlsx"; // Specify your directory here
+        try (FileOutputStream fileOut = new FileOutputStream(filePath)) {
+            fileOut.write(excelBytes);
+        }
+
+        // Set response headers
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=investor_" + investorId + "_investments.xlsx");
+        headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_OCTET_STREAM_VALUE);
+
+        // Return the file as a downloadable response
+        return ResponseEntity.ok()
+                .headers(headers)
+                .contentLength(excelBytes.length)
+                .body(new ByteArrayResource(excelBytes));
     }
 
 

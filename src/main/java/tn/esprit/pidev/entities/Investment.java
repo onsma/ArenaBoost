@@ -65,19 +65,7 @@ public class Investment {
     @Column(name = "is_active", nullable = false)
     private Boolean isActive = true;
 
-    // Getters and Setters
-    public Boolean getIsActive() {
-        return isActive;
-    }
 
-    public void setIsActive(Boolean isActive) {
-        this.isActive = isActive;
-    }
-    @Column(name = "exit_amount")
-    private Double exitAmount; // Amount received upon exiting the investment
-
-    @Column(name = "dividend_rate")
-    private Double dividendRate; // Dividend rate (if applicab
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
@@ -93,8 +81,42 @@ public class Investment {
     @Enumerated(EnumType.STRING)
     private DividendPaymentFrequency dividendPaymentFrequency;
 
-    @OneToMany(mappedBy = "investment")  // Un investissement peut avoir plusieurs transactions
+    @Column(name = "net_profit")
+    private Double netProfit;
+
+    @Column(name = "current_value")
+    private Double currentValue;
+
+    @Column(name = "exit_amount")
+    private Double exitAmount; // Use Double instead of double
+
+    @Column(name = "investor_notes")
+    private String investorNotes;
+
+
+    @Column(name = "currency")
+    private String currency;
+
+    @Column(name = "investor_satisfaction")
+    private Integer investorSatisfaction;
+    @OneToMany(mappedBy = "investment")
     private List<Transaction> transactions;
+
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = new Date();
+        this.updatedAt = new Date();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = new Date();
+    }
+
+    public Investment() {
+        this.isActive = true; // Default value
+    }
 
     public Long getInvestmentId() {
         return investmentId;
@@ -110,6 +132,14 @@ public class Investment {
 
     public void setInvestor(Investor investor) {
         this.investor = investor;
+    }
+
+    public EmailDetails getEmailDetails() {
+        return emailDetails;
+    }
+
+    public void setEmailDetails(EmailDetails emailDetails) {
+        this.emailDetails = emailDetails;
     }
 
     public Athlete getAthlete() {
@@ -144,6 +174,22 @@ public class Investment {
         this.investmentType = investmentType;
     }
 
+    public Double getExpectedROI() {
+        return expectedROI;
+    }
+
+    public void setExpectedROI(Double expectedROI) {
+        this.expectedROI = expectedROI;
+    }
+
+    public Double getActualROI() {
+        return actualROI;
+    }
+
+    public void setActualROI(Double actualROI) {
+        this.actualROI = actualROI;
+    }
+
     public Date getStartDate() {
         return startDate;
     }
@@ -166,6 +212,30 @@ public class Investment {
 
     public void setRoiPercentage(Double roiPercentage) {
         this.roiPercentage = roiPercentage;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Boolean getActive() {
+        return isActive;
+    }
+
+    public void setActive(Boolean active) {
+        isActive = active;
+    }
+
+    public Double getExitAmount() {
+        return exitAmount;
+    }
+
+    public void setExitAmount(Double exitAmount) {
+        this.exitAmount = exitAmount;
     }
 
     public InvestmentStatus getStatus() {
@@ -192,25 +262,59 @@ public class Investment {
         this.updatedAt = updatedAt;
     }
 
+    public DividendPaymentFrequency getDividendPaymentFrequency() {
+        return dividendPaymentFrequency;
+    }
+
+    public void setDividendPaymentFrequency(DividendPaymentFrequency dividendPaymentFrequency) {
+        this.dividendPaymentFrequency = dividendPaymentFrequency;
+    }
+
+    public Double getNetProfit() {
+        return netProfit;
+    }
+
+    public void setNetProfit(Double netProfit) {
+        this.netProfit = netProfit;
+    }
+
+    public Double getCurrentValue() {
+        return currentValue;
+    }
+
+    public void setCurrentValue(Double currentValue) {
+        this.currentValue = currentValue;
+    }
+
+    public String getInvestorNotes() {
+        return investorNotes;
+    }
+
+    public void setInvestorNotes(String investorNotes) {
+        this.investorNotes = investorNotes;
+    }
+
+    public String getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
+    }
+
+    public Integer getInvestorSatisfaction() {
+        return investorSatisfaction;
+    }
+
+    public void setInvestorSatisfaction(Integer investorSatisfaction) {
+        this.investorSatisfaction = investorSatisfaction;
+    }
+
     public List<Transaction> getTransactions() {
         return transactions;
     }
 
     public void setTransactions(List<Transaction> transactions) {
         this.transactions = transactions;
-    }
-    @PrePersist
-    protected void onCreate() {
-        this.createdAt = new Date();
-        this.updatedAt = new Date();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        this.updatedAt = new Date();
-    }
-
-    public Investment() {
-        this.isActive = true; // Default value
     }
 }

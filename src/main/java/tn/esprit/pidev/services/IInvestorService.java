@@ -25,4 +25,6 @@ public interface IInvestorService {
     public List<Manager> searchManagersByName(String name);
     public List<Manager> searchManagersBySport(String sport);
     public List<Manager> searchManagersByFinancialStatus(String financialStatus);
+    //public report
+
 }
