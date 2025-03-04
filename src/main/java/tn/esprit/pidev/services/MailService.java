@@ -19,7 +19,7 @@ public class MailService {
         String sujet = "Mise à jour de votre demande de prêt - ArenaBoost";
         String logoUrl = "http://www.image-heberg.fr/files/17404892802444178759.png"; // URL du logo
 
-        // 🖋️ **HTML du message**
+        // HTML du message
         String message = "<div style='font-family: Arial, sans-serif; color: #333; padding: 20px;'>"
                 + "<div style='text-align: center;'>"
                 + "<img src='" + logoUrl + "' width='150' alt='ArenaBoost Logo' style='margin-bottom: 20px;'/>"
@@ -31,19 +31,44 @@ public class MailService {
                 + "<p style='margin-top: 20px;'>Cordialement,<br><strong>L'équipe ArenaBoost</strong></p>"
                 + "</div>";
 
+        envoyerEmail(destinataire, sujet, message);
+    }
+
+    public void envoyerNotificationCreationLoan(Loan loan) {
+        String destinataire = loan.getUser().getEmail();  // Email du demandeur du prêt
+        String sujet = "Confirmation de votre demande de prêt - ArenaBoost";
+        String logoUrl = "http://www.image-heberg.fr/files/17404892802444178759.png"; // URL du logo
+
+        // HTML du message
+        String message = "<div style='font-family: Arial, sans-serif; color: #333; padding: 20px;'>"
+                + "<div style='text-align: center;'>"
+                + "<img src='" + logoUrl + "' width='150' alt='ArenaBoost Logo' style='margin-bottom: 20px;'/>"
+                + "</div>"
+                + "<p>Bonjour <strong>" + loan.getUser().getFirstName() + "</strong>,</p>"
+                + "<p>Nous avons bien reçu votre demande de prêt d'un montant de <strong>" + loan.getAmount() + " TND</strong>.</p>"
+                + "<p>Votre demande est actuellement <strong>en cours d'analyse</strong> par notre équipe ArenaBoost.</p>"
+                + "<p>Nous vous tiendrons informé de l'évolution de votre demande.</p>"
+                + "<p>Merci de votre confiance.</p>"
+                + "<p style='margin-top: 20px;'>Cordialement,<br><strong>L'équipe ArenaBoost</strong></p>"
+                + "</div>";
+
+        envoyerEmail(destinataire, sujet, message);
+    }
+
+    private void envoyerEmail(String destinataire, String sujet, String message) {
         try {
             MimeMessage email = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(email, true, "UTF-8");
             helper.setTo(destinataire);
             helper.setSubject(sujet);
-            helper.setText(message, true); // 🔥 **Active l'affichage HTML**
+            helper.setText(message, true);
             helper.setFrom("skandernacheb@gmail.com");
 
             mailSender.send(email);
-            System.out.println("📩 Email envoyé avec succès !");
+            System.out.println("📩 Email envoyé avec succès à " + destinataire);
         } catch (MessagingException e) {
             e.printStackTrace();
-            System.out.println("❌ Erreur lors de l'envoi de l'email.");
+            System.out.println("❌ Erreur lors de l'envoi de l'email à " + destinataire);
         }
     }
 }

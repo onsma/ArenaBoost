@@ -5,6 +5,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import tn.esprit.pidev.dto.LoanSearchCriteria;
 import tn.esprit.pidev.dto.LoanStatisticsDTO;
 import tn.esprit.pidev.entities.Loan;
 import tn.esprit.pidev.services.LoanService;
@@ -86,5 +87,10 @@ public class LoanController {
     public ResponseEntity<LoanStatisticsDTO> getLoanStatistics() {
         LoanStatisticsDTO stats = loanService.getLoanStatistics();
         return ResponseEntity.ok(stats);
+    }
+    @PostMapping("/search")
+    public ResponseEntity<List<Loan>> searchLoans(@RequestBody LoanSearchCriteria criteria) {
+        List<Loan> loans = loanService.searchLoans(criteria);
+        return ResponseEntity.ok(loans);
     }
 }

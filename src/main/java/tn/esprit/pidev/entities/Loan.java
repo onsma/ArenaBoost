@@ -25,7 +25,8 @@ public class Loan {
     private int refund_duration;
 
     @Enumerated(EnumType.STRING)
-    private Status status;
+    private Status status = Status.pending; // Définir l'état par défaut à PENDING
+
 
 
     @Column(nullable = false, updatable = false)

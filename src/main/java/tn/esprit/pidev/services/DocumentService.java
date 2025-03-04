@@ -1,13 +1,12 @@
 package tn.esprit.pidev.services;
+
+import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.*;
 import com.itextpdf.kernel.pdf.canvas.draw.SolidLine;
 import com.itextpdf.layout.Document;
-import com.itextpdf.layout.element.Cell;
-import com.itextpdf.layout.element.LineSeparator;
-import com.itextpdf.layout.element.Paragraph;
-import com.itextpdf.layout.element.Table;
+import com.itextpdf.layout.element.*;
 import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.layout.properties.UnitValue;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,12 +47,19 @@ public class DocumentService {
         // ✅ Ajout de marges
         document.setMargins(40, 40, 40, 40);
 
+        // 📌 Ajout du Logo en haut de la page
+        String logoPath = "http://www.image-heberg.fr/files/17404892802444178759.png"; // Remplace par le chemin réel de ton logo
+        Image logo = new Image(ImageDataFactory.create(logoPath));
+        logo.setWidth(100);
+        logo.setTextAlignment(TextAlignment.CENTER);
+        document.add(logo);
+
         // 📌 1. **Ajout de l'En-tête avec un Logo**
         Paragraph header = new Paragraph("CONTRAT DE PRÊT")
                 .setFontSize(18)
                 .setBold()
                 .setTextAlignment(TextAlignment.CENTER)
-                .setFontColor(ColorConstants.BLUE);
+                .setFontColor(ColorConstants.BLACK);
         document.add(header);
 
         // 📌 2. **Ajout d'une Ligne de Séparation**
@@ -66,7 +72,7 @@ public class DocumentService {
         table.addCell(new Cell().add(new Paragraph(loan.getUser().getFirstName() + " " + loan.getUser().getLastName())));
 
         table.addCell(new Cell().add(new Paragraph("Montant du Prêt :").setBold()));
-        table.addCell(new Cell().add(new Paragraph(loan.getAmount() + " €")));
+        table.addCell(new Cell().add(new Paragraph(loan.getAmount() + " TND")));
 
         table.addCell(new Cell().add(new Paragraph("Durée :").setBold()));
         table.addCell(new Cell().add(new Paragraph(loan.getRefund_duration() + " mois")));

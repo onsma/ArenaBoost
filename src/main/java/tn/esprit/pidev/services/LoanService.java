@@ -1,10 +1,16 @@
 package tn.esprit.pidev.services;
 
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
+import jakarta.persistence.criteria.Predicate;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import tn.esprit.pidev.dto.LoanSearchCriteria;
 import tn.esprit.pidev.dto.LoanStatisticsDTO;
 import tn.esprit.pidev.entities.Loan;
+import tn.esprit.pidev.entities.Status;
 import tn.esprit.pidev.entities.User;
 import tn.esprit.pidev.repositories.LoanRepository;
 import tn.esprit.pidev.repositories.UserRepository;
@@ -37,7 +43,16 @@ public class LoanService {
 
         loan.setUser(userOptional.get());
         loan.setRequestDate(LocalDate.now());
-        return loanRepository.save(loan);
+        // S'assurer que le statut est bien défini à PENDING
+        if (loan.getStatus() == null) {
+            loan.setStatus(Status.pending);
+        }
+        Loan savedLoan = loanRepository.save(loan);
+
+        // 📩 Envoi d'un e-mail pour informer que la demande est en cours d'analyse
+        mailService.envoyerNotificationCreationLoan(savedLoan);
+
+        return savedLoan;
 
     }
 
@@ -88,5 +103,46 @@ public class LoanService {
         long rejectedLoans = allLoans.stream().filter(loan -> loan.getStatus().name().equalsIgnoreCase("REJECTED")).count();
 
         return new LoanStatisticsDTO(totalLoans, totalAmount, averageDuration, pendingLoans, approvedLoans, rejectedLoans);
+    }
+    // 🎯 Recherche avancée des prêts avec Criteria API
+    public List<Loan> searchLoans(LoanSearchCriteria criteria) {
+        Specification<Loan> spec = (root, query, cb) -> {
+            Predicate predicate = cb.conjunction();
+
+            if (criteria.getMinAmount() != null) {
+                predicate = cb.and(predicate, cb.greaterThanOrEqualTo(root.get("amount"), criteria.getMinAmount()));
+            }
+            if (criteria.getMaxAmount() != null) {
+                predicate = cb.and(predicate, cb.lessThanOrEqualTo(root.get("amount"), criteria.getMaxAmount()));
+            }
+            if (criteria.getLoantype() != null) {
+                predicate = cb.and(predicate, cb.equal(root.get("loantype"), criteria.getLoantype()));
+            }
+            if (criteria.getMinInterestRate() != null) {
+                predicate = cb.and(predicate, cb.greaterThanOrEqualTo(root.get("interest_rate"), criteria.getMinInterestRate()));
+            }
+            if (criteria.getMaxInterestRate() != null) {
+                predicate = cb.and(predicate, cb.lessThanOrEqualTo(root.get("interest_rate"), criteria.getMaxInterestRate()));
+            }
+            if (criteria.getMinDuration() != null) {
+                predicate = cb.and(predicate, cb.greaterThanOrEqualTo(root.get("refund_duration"), criteria.getMinDuration()));
+            }
+            if (criteria.getMaxDuration() != null) {
+                predicate = cb.and(predicate, cb.lessThanOrEqualTo(root.get("refund_duration"), criteria.getMaxDuration()));
+            }
+            if (criteria.getStatus() != null) {
+                predicate = cb.and(predicate, cb.equal(root.get("status"), criteria.getStatus()));
+            }
+            if (criteria.getUserKeyword() != null) {
+                Join<Object, Object> userJoin = root.join("user", JoinType.INNER);
+                Predicate namePredicate = cb.like(userJoin.get("firstName"), "%" + criteria.getUserKeyword() + "%");
+                Predicate emailPredicate = cb.like(userJoin.get("email"), "%" + criteria.getUserKeyword() + "%");
+                predicate = cb.and(predicate, cb.or(namePredicate, emailPredicate));
+            }
+
+            return predicate;
+        };
+
+        return loanRepository.findAll(spec);
     }
 }
