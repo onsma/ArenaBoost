@@ -68,11 +68,9 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>com.itextpdf</groupId>
-            <artifactId>kernel</artifactId>
-            <version>7.2.5</version>
-        </dependency>
+
+
+
         <dependency>
             <groupId>com.itextpdf</groupId>
             <artifactId>layout</artifactId>
@@ -86,12 +84,7 @@
             <version>3.8.6</version>
         </dependency>
 
-        <!-- Nouvelle dépendance pour Spring AI avec Ollama -->
-        <dependency>
-            <groupId>org.springframework.ai</groupId>
-            <artifactId>spring-ai-ollama-spring-boot-starter</artifactId>
-            <version>1.0.0-M5</version>
-        </dependency>
+
 
         <!-- Ajout pour générer des QR codes -->
         <dependency>

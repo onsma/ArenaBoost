@@ -4,8 +4,8 @@ import com.example.project.projectbackend.entity.ProjectAnalytics;
 import com.example.project.projectbackend.entity.ProjectPrediction;
 import com.example.project.projectbackend.entity.Contribution;
 import com.example.project.projectbackend.entity.Event;
+import com.example.project.projectbackend.service.RecommendationService;
 import com.example.project.projectbackend.entity.Project;
-import com.example.project.projectbackend.service.ChatbotProjectService;
 import com.example.project.projectbackend.service.IProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -19,10 +19,13 @@ import java.util.List;
 public class ProjectRestController {
 
     private final IProjectService projectService;
+    private final RecommendationService recommendationService; // Ajouter le service de recommandation
+
 
     @Autowired
-    public ProjectRestController(IProjectService projectService) {
+    public ProjectRestController(IProjectService projectService, RecommendationService recommendationService) {
         this.projectService = projectService;
+        this.recommendationService = recommendationService;
     }
 
     @GetMapping("/retrieve-all-projects")
@@ -94,22 +97,21 @@ public class ProjectRestController {
                 .contentType(MediaType.APPLICATION_PDF)
                 .body(report);
     }
+
     @GetMapping("/search")
     public List<Project> searchProjectsByName(@RequestParam("name") String name) {
         return projectService.searchProjectsByName(name);
     }
+
     @GetMapping("/{project-id}/predict-outcome")
     public ProjectPrediction predictProjectOutcome(@PathVariable("project-id") Integer projectId) {
         return projectService.predictProjectOutcome(projectId);
     }
-
-    @GetMapping("/{project-id}/chat")
-    public ResponseEntity<String> getChatResponse(@PathVariable("project-id") Integer projectId, @RequestParam String question) {
-        try {
-            String response = chatbotProjectService.getProjectResponse(projectId, question);
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body("Erreur lors de la réponse du chatbot : " + e.getMessage());
-        }
+    @GetMapping("/{supporter-name}/recommendations")
+    public ResponseEntity<List<Project>> getRecommendations(@PathVariable("supporter-name") String supporterName) {
+        List<Project> recommendations = recommendationService.recommendProjects(supporterName);
+        return ResponseEntity.ok(recommendations);
     }
+
+
 }

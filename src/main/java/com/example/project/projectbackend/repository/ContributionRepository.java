@@ -10,4 +10,7 @@ public interface ContributionRepository extends JpaRepository<Contribution, Inte
     @Query("SELECT c FROM Contribution c WHERE c.project.id_project = :projectId")
     List<Contribution> findByProjectId(@Param("projectId") Integer projectId);
     List<Contribution> findAll();
+    @Query("SELECT c FROM Contribution c WHERE c.supporter_name = :supporterName")
+    List<Contribution> findBySupporterName(@Param("supporterName") String supporterName);
+
 }
