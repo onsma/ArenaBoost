@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>ArenaBoost - Fueling Ambitions, Powering Champions</title>
+    <!-- plugins:css -->
+    <link rel="stylesheet" href="template/assets/vendors/mdi/css/materialdesignicons.min.css">
+    <link rel="stylesheet" href="template/assets/vendors/css/vendor.bundle.base.css">
+    <!-- endinject -->
+    <!-- Plugin css for this page -->
+    <link rel="stylesheet" href="template/assets/vendors/jvectormap/jquery-jvectormap.css">
+    <link rel="stylesheet" href="template/assets/vendors/flag-icon-css/css/flag-icon.min.css">
+    <link rel="stylesheet" href="template/assets/vendors/owl-carousel-2/owl.carousel.min.css">
+    <link rel="stylesheet" href="template/assets/vendors/owl-carousel-2/owl.theme.default.min.css">
+    <!-- End plugin css for this page -->
+    <!-- inject:css -->
+    <!-- endinject -->
+    <!-- Layout styles with override for dark theme -->
+    <link rel="stylesheet" href="template/assets/css/style.css">
+    <!-- Complete light theme override -->
+    <link rel="stylesheet" href="light-theme-override.css">
+    <!-- Emergency sidebar fix -->
+    <style>
+      /* Direct fix for sidebar brand wrapper */
+      .sidebar-brand-wrapper,
+      .sidebar-brand-wrapper.d-none.d-lg-flex,
+      .sidebar-brand-wrapper.fixed-top,
+      .sidebar > .sidebar-brand-wrapper,
+      nav.sidebar .sidebar-brand-wrapper {
+        background-color: #ffffff !important;
+        background: #ffffff !important;
+        background-image: none !important;
+      }
+
+      /* Fix for any potential pseudo-elements */
+      .sidebar-brand-wrapper:before,
+      .sidebar-brand-wrapper:after {
+        background-color: #ffffff !important;
+        background: #ffffff !important;
+        content: none !important;
+      }
+
+      /* Override any template styles */
+      body .sidebar-brand-wrapper,
+      html body .sidebar-brand-wrapper,
+      .container-scroller .sidebar-brand-wrapper {
+        background-color: #ffffff !important;
+        background: #ffffff !important;
+      }
+
+      /* Ensure the logo is visible */
+      .sidebar-brand-wrapper img {
+        filter: none !important;
+      }
+    </style>
+    <!-- End layout styles -->
+    <link rel="shortcut icon" href="template/assets/images/favicon.png" />
+    <!-- ArenaBoost custom styles - Light Theme -->
+    <style>
+      :root {
+        --arenaboost-black: #000000;
+        --arenaboost-white: #ffffff;
+        --arenaboost-gold: #d4af37;
+        --arenaboost-dark-gold: #aa8c2c;
+        --arenaboost-light-gold: #f4cf5c;
+        --arenaboost-gray: #e0e0e0;
+        --arenaboost-light-gray: #f5f5f5;
+        --arenaboost-text: #333333;
+      }
+
+      body {
+        background-color: var(--arenaboost-light-gray);
+        color: var(--arenaboost-text);
+      }
+
+      /* Background colors */
+      .content-wrapper {
+        background-color: var(--arenaboost-white);
+      }
+
+      /* Card styling */
+      .card {
+        background-color: var(--arenaboost-white);
+        border: 1px solid var(--arenaboost-gray);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      }
+
+      .card .card-title {
+        color: var(--arenaboost-black);
+      }
+
+      /* Button styling */
+      .btn-primary {
+        background-color: var(--arenaboost-gold) !important;
+        border-color: var(--arenaboost-gold) !important;
+        color: var(--arenaboost-black) !important;
+      }
+
+      .btn-primary:hover {
+        background-color: var(--arenaboost-dark-gold) !important;
+        border-color: var(--arenaboost-dark-gold) !important;
+        color: var(--arenaboost-black) !important;
+      }
+
+      /* Icon colors */
+      .icon-box-success {
+        color: var(--arenaboost-gold) !important;
+        background-color: rgba(212, 175, 55, 0.1);
+      }
+
+      .icon-item {
+        color: var(--arenaboost-gold) !important;
+      }
+
+      /* Text colors */
+      .text-success {
+        color: var(--arenaboost-gold) !important;
+      }
+
+      .text-gold {
+        color: var(--arenaboost-gold) !important;
+      }
+
+      .text-muted {
+        color: #6c757d !important;
+      }
+
+      /* Navbar and sidebar branding */
+      .sidebar {
+        background-color: var(--arenaboost-white);
+        border-right: 1px solid var(--arenaboost-gray);
+      }
+
+      .sidebar .nav .nav-item .nav-link {
+        color: var(--arenaboost-text);
+      }
+
+      .sidebar .nav .nav-item.active .nav-link {
+        background-color: rgba(212, 175, 55, 0.1);
+      }
+
+      .sidebar-brand-wrapper {
+        background-color: var(--arenaboost-white);
+        border-bottom: 1px solid var(--arenaboost-gold);
+      }
+
+      .navbar {
+        background-color: var(--arenaboost-white);
+        border-bottom: 1px solid var(--arenaboost-gray);
+      }
+
+      .navbar-profile-name {
+        color: var(--arenaboost-text) !important;
+      }
+
+      /* Custom gradient card for dashboard header */
+      .arenaboost-gradient-card {
+        background-image: linear-gradient(to right, var(--arenaboost-white), var(--arenaboost-light-gray));
+        border: 1px solid var(--arenaboost-gold);
+      }
+
+      /* Logo container */
+      .arenaboost-logo-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 20px;
+      }
+
+      .arenaboost-logo-container img {
+        max-width: 250px;
+        height: auto;
+      }
+
+      .arenaboost-tagline {
+        color: var(--arenaboost-gold);
+        font-style: italic;
+        text-align: center;
+        margin-top: 10px;
+      }
+
+      /* Stats numbers */
+      .d-flex h3 {
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: var(--arenaboost-gold);
+      }
+
+      /* Footer */
+      .footer {
+        background-color: var(--arenaboost-white);
+        border-top: 1px solid var(--arenaboost-gray);
+      }
+
+      /* Dropdown menu */
+      .dropdown-menu {
+        background-color: var(--arenaboost-white);
+        border: 1px solid var(--arenaboost-gray);
+      }
+
+      .dropdown-item {
+        color: var(--arenaboost-text);
+      }
+
+      .dropdown-item:hover {
+        background-color: rgba(212, 175, 55, 0.1);
+      }
+
+      /* Form controls */
+      .form-control {
+        background-color: var(--arenaboost-light-gray);
+        border: 1px solid var(--arenaboost-gray);
+        color: var(--arenaboost-text);
+      }
+
+      /* Override dark theme elements */
+      .bg-dark {
+        background-color: var(--arenaboost-light-gray) !important;
+      }
+
+      .text-white {
+        color: var(--arenaboost-text) !important;
+      }
+
+      /* Additional light theme overrides */
+      .light-theme .sidebar .nav .nav-item .menu-icon {
+        color: var(--arenaboost-gold);
+      }
+
+      .light-theme .sidebar .nav .nav-item .nav-link:hover .menu-icon {
+        color: var(--arenaboost-dark-gold);
+      }
+
+      .light-theme .sidebar .nav .nav-item.nav-category {
+        color: var(--arenaboost-text);
+      }
+
+      .light-theme .preview-icon {
+        background-color: var(--arenaboost-light-gray) !important;
+      }
+
+      .light-theme .preview-item-content p {
+        color: var(--arenaboost-text) !important;
+      }
+
+      .light-theme .dropdown-menu h6 {
+        color: var(--arenaboost-text);
+      }
+
+      .light-theme .navbar-profile img {
+        border: 2px solid var(--arenaboost-gold);
+      }
+
+      /* Override template dark styles */
+      body, .container-scroller, .page-body-wrapper, .main-panel {
+        background-color: var(--arenaboost-white) !important;
+      }
+
+      .count-indicator .count {
+        background: var(--arenaboost-gold) !important;
+      }
+
+      .profile-name h5, .profile-name span {
+        color: var(--arenaboost-text) !important;
+      }
+
+      .nav-item.profile .profile-desc {
+        background-color: var(--arenaboost-white) !important;
+        border-bottom: 1px solid var(--arenaboost-gray);
+      }
+
+      .nav-item.nav-category .nav-link {
+        color: var(--arenaboost-text) !important;
+      }
+
+      .menu-title {
+        color: var(--arenaboost-text) !important;
+      }
+
+      .dropdown-divider {
+        border-color: var(--arenaboost-gray) !important;
+      }
+    </style>
+  </head>
+  <body class="light-theme">
+    <div class="container-scroller">
+      <!-- partial:partials/_sidebar.html -->
+      <nav class="sidebar sidebar-offcanvas" id="sidebar" style="background-color: #ffffff !important;">
+        <div class="sidebar-brand-wrapper d-none d-lg-flex align-items-center justify-content-center fixed-top" style="background-color: #ffffff !important; background: #ffffff !important; background-image: none !important;">
+          <a class="sidebar-brand brand-logo" href="index.html">
+            <img src="src/assets/images/arenaboost-logo.svg" alt="logo" style="max-height: 40px;" />
+          </a>
+          <a class="sidebar-brand brand-logo-mini" href="index.html">
+            <img src="src/assets/images/arenaboost-logo.svg" alt="logo" style="max-height: 30px;" />
+          </a>
+        </div>
+        <ul class="nav">
+          <li class="nav-item profile">
+            <div class="profile-desc">
+              <div class="profile-pic">
+                <div class="count-indicator">
+                  <img class="img-xs rounded-circle " src="template/assets/images/faces/face15.jpg" alt="">
+                  <span class="count bg-success"></span>
+                </div>
+                <div class="profile-name">
+                  <h5 class="mb-0 font-weight-normal">Utilisateur</h5>
+                  <span class="text-gold">Gold Member</span>
+                </div>
+              </div>
+            </div>
+          </li>
+          <li class="nav-item nav-category">
+            <span class="nav-link">Navigation</span>
+          </li>
+          <li class="nav-item menu-items">
+            <a class="nav-link" href="index.html">
+              <span class="menu-icon">
+                <i class="mdi mdi-speedometer"></i>
+              </span>
+              <span class="menu-title">Dashboard</span>
+            </a>
+          </li>
+          <li class="nav-item menu-items">
+            <a class="nav-link" href="#">
+              <span class="menu-icon">
+                <i class="mdi mdi-currency-usd"></i>
+              </span>
+              <span class="menu-title">Prêts</span>
+            </a>
+          </li>
+          <li class="nav-item menu-items">
+            <a class="nav-link" href="#">
+              <span class="menu-icon">
+                <i class="mdi mdi-chart-bar"></i>
+              </span>
+              <span class="menu-title">Statistiques</span>
+            </a>
+          </li>
+          <li class="nav-item menu-items">
+            <a class="nav-link" href="user-settings.html">
+              <span class="menu-icon">
+                <i class="mdi mdi-account"></i>
+              </span>
+              <span class="menu-title">Profil</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+      <!-- partial -->
+      <div class="container-fluid page-body-wrapper">
+        <!-- partial:partials/_navbar.html -->
+        <nav class="navbar p-0 fixed-top d-flex flex-row">
+          <div class="navbar-brand-wrapper d-flex d-lg-none align-items-center justify-content-center">
+            <a class="navbar-brand brand-logo-mini" href="index.html">
+              <img src="src/assets/images/arenaboost-logo.svg" alt="logo" style="max-height: 30px;" />
+            </a>
+          </div>
+          <div class="navbar-menu-wrapper flex-grow d-flex align-items-stretch">
+            <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
+              <span class="mdi mdi-menu"></span>
+            </button>
+            <ul class="navbar-nav w-100">
+              <li class="nav-item w-100">
+                <form class="nav-link mt-2 mt-md-0 d-none d-lg-flex search">
+                  <input type="text" class="form-control" placeholder="Rechercher...">
+                </form>
+              </li>
+            </ul>
+            <ul class="navbar-nav navbar-nav-right">
+              <li class="nav-item dropdown">
+                <a class="nav-link" id="profileDropdown" href="#" data-toggle="dropdown">
+                  <div class="navbar-profile">
+                    <img class="img-xs rounded-circle" src="template/assets/images/faces/face15.jpg" alt="">
+                    <p class="mb-0 d-none d-sm-block navbar-profile-name">Utilisateur</p>
+                    <i class="mdi mdi-menu-down d-none d-sm-block"></i>
+                  </div>
+                </a>
+                <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="profileDropdown">
+                  <h6 class="p-3 mb-0">Profil</h6>
+                  <div class="dropdown-divider"></div>
+                  <a class="dropdown-item preview-item" href="user-settings.html">
+                    <div class="preview-thumbnail">
+                      <div class="preview-icon rounded-circle" style="background-color: #f5f5f5;">
+                        <i class="mdi mdi-settings text-success"></i>
+                      </div>
+                    </div>
+                    <div class="preview-item-content">
+                      <p class="preview-subject mb-1">Paramètres</p>
+                    </div>
+                  </a>
+                  <div class="dropdown-divider"></div>
+                  <a class="dropdown-item preview-item">
+                    <div class="preview-thumbnail">
+                      <div class="preview-icon rounded-circle" style="background-color: #f5f5f5;">
+                        <i class="mdi mdi-logout text-danger"></i>
+                      </div>
+                    </div>
+                    <div class="preview-item-content">
+                      <p class="preview-subject mb-1">Déconnexion</p>
+                    </div>
+                  </a>
+                </div>
+              </li>
+            </ul>
+            <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
+              <span class="mdi mdi-format-line-spacing"></span>
+            </button>
+          </div>
+        </nav>
+        <!-- partial -->
+        <div class="main-panel">
+          <div class="content-wrapper">
+            <!-- ArenaBoost Logo and Branding -->
+            <div class="row mb-4">
+              <div class="col-12 grid-margin">
+                <div class="card arenaboost-gradient-card">
+                  <div class="card-body py-3">
+                    <div class="arenaboost-logo-container">
+                      <img src="src/assets/images/arenaboost-logo.svg" alt="ArenaBoost Logo" style="max-width: 300px;">
+                    </div>
+                    <h4 class="text-center" style="color: #333333;">Fueling Ambitions, Powering Champions</h4>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Dashboard Stats -->
+            <div class="row">
+              <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="row">
+                      <div class="col-9">
+                        <div class="d-flex align-items-center">
+                          <h3 class="mb-0">24</h3>
+                        </div>
+                        <h6 class="text-muted font-weight-normal">Crédits en cours</h6>
+                      </div>
+                      <div class="col-3">
+                        <div class="icon icon-box-success">
+                          <span class="mdi mdi-currency-usd icon-item"></span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="row">
+                      <div class="col-9">
+                        <div class="d-flex align-items-center">
+                          <h3 class="mb-0">42</h3>
+                        </div>
+                        <h6 class="text-muted font-weight-normal">Utilisateurs actifs</h6>
+                      </div>
+                      <div class="col-3">
+                        <div class="icon icon-box-success">
+                          <span class="mdi mdi-account-multiple icon-item"></span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="row">
+                      <div class="col-9">
+                        <div class="d-flex align-items-center">
+                          <h3 class="mb-0">€12,500</h3>
+                        </div>
+                        <h6 class="text-muted font-weight-normal">Montant total</h6>
+                      </div>
+                      <div class="col-3">
+                        <div class="icon icon-box-success">
+                          <span class="mdi mdi-cash-multiple icon-item"></span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="row">
+                      <div class="col-9">
+                        <div class="d-flex align-items-center">
+                          <h3 class="mb-0">15</h3>
+                        </div>
+                        <h6 class="text-muted font-weight-normal">Nouvelles demandes</h6>
+                      </div>
+                      <div class="col-3">
+                        <div class="icon icon-box-success">
+                          <span class="mdi mdi-file-document icon-item"></span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Charts and Graphs -->
+            <div class="row">
+              <div class="col-lg-6 grid-margin stretch-card">
+                <div class="card">
+                  <div class="card-body">
+                    <h4 class="card-title text-gold">Statistiques des prêts</h4>
+                    <canvas id="loanChart"></canvas>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-lg-6 grid-margin stretch-card">
+                <div class="card">
+                  <div class="card-body">
+                    <h4 class="card-title text-gold">Activité récente</h4>
+                    <canvas id="activityChart"></canvas>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- content-wrapper ends -->
+          <!-- partial:partials/_footer.html -->
+          <footer class="footer">
+            <div class="d-sm-flex justify-content-center justify-content-sm-between">
+              <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">Copyright © ArenaBoost 2023</span>
+              <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center text-gold">Fueling Ambitions, Powering Champions</span>
+            </div>
+          </footer>
+          <!-- partial -->
+        </div>
+        <!-- main-panel ends -->
+      </div>
+      <!-- page-body-wrapper ends -->
+    </div>
+    <!-- container-scroller -->
+    <!-- plugins:js -->
+    <script src="template/assets/vendors/js/vendor.bundle.base.js"></script>
+    <!-- endinject -->
+    <!-- Plugin js for this page -->
+    <script src="template/assets/vendors/chart.js/Chart.min.js"></script>
+    <script src="template/assets/vendors/progressbar.js/progressbar.min.js"></script>
+    <script src="template/assets/vendors/jvectormap/jquery-jvectormap.min.js"></script>
+    <script src="template/assets/vendors/jvectormap/jquery-jvectormap-world-mill-en.js"></script>
+    <script src="template/assets/vendors/owl-carousel-2/owl.carousel.min.js"></script>
+    <!-- End plugin js for this page -->
+    <!-- inject:js -->
+    <script src="template/assets/js/off-canvas.js"></script>
+    <script src="template/assets/js/hoverable-collapse.js"></script>
+    <script src="template/assets/js/misc.js"></script>
+    <script src="template/assets/js/settings.js"></script>
+    <script src="template/assets/js/todolist.js"></script>
+    <!-- endinject -->
+    <!-- Custom js for this page -->
+    <script>
+      // Immediate fix for sidebar
+      (function() {
+        // Force white background on sidebar brand wrapper
+        var sidebarBrandWrapper = document.querySelector('.sidebar-brand-wrapper');
+        if (sidebarBrandWrapper) {
+          sidebarBrandWrapper.style.backgroundColor = '#ffffff';
+          sidebarBrandWrapper.style.background = '#ffffff';
+          sidebarBrandWrapper.style.backgroundImage = 'none';
+        }
+      })();
+
+      // Initialize charts when the document is ready
+      document.addEventListener('DOMContentLoaded', function() {
+        // Force light theme on sidebar elements
+        document.querySelectorAll('.sidebar-brand-wrapper, .sidebar-brand-wrapper *').forEach(function(el) {
+          el.style.backgroundColor = '#ffffff';
+        });
+
+        // Apply light theme to any remaining dark elements
+        document.querySelectorAll('.bg-dark, [class*="bg-dark"]').forEach(function(el) {
+          el.style.backgroundColor = '#f5f5f5';
+          el.classList.remove('bg-dark');
+        });
+
+        // Ensure text is visible
+        document.querySelectorAll('.text-white, [class*="text-white"]').forEach(function(el) {
+          el.style.color = '#333333';
+          el.classList.remove('text-white');
+        });
+        // Loan Chart
+        if (document.getElementById('loanChart')) {
+          const loanChartCanvas = document.getElementById('loanChart').getContext('2d');
+
+          const loanChartData = {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+            datasets: [{
+              label: 'Prêts approuvés',
+              data: [15, 19, 12, 17, 20, 24],
+              backgroundColor: 'rgba(212, 175, 55, 0.2)', // Light Gold
+              borderColor: '#d4af37', // Gold
+              borderWidth: 2,
+              fill: true
+            }, {
+              label: 'Prêts en attente',
+              data: [8, 12, 5, 9, 12, 15],
+              backgroundColor: 'rgba(0, 0, 0, 0.05)', // Light Gray
+              borderColor: '#333333', // Dark Gray
+              borderWidth: 2,
+              fill: true
+            }]
+          };
+
+          const loanChartOptions = {
+            responsive: true,
+            maintainAspectRatio: true,
+            scales: {
+              yAxes: [{
+                ticks: {
+                  beginAtZero: true,
+                  fontColor: '#333333' // Dark text for light theme
+                },
+                gridLines: {
+                  color: 'rgba(0, 0, 0, 0.1)' // Light gray grid lines
+                }
+              }],
+              xAxes: [{
+                ticks: {
+                  fontColor: '#333333' // Dark text for light theme
+                },
+                gridLines: {
+                  color: 'rgba(0, 0, 0, 0.1)' // Light gray grid lines
+                }
+              }]
+            },
+            legend: {
+              labels: {
+                fontColor: '#333333' // Dark text for light theme
+              }
+            }
+          };
+
+          new Chart(loanChartCanvas, {
+            type: 'line',
+            data: loanChartData,
+            options: loanChartOptions
+          });
+        }
+
+        // Activity Chart
+        if (document.getElementById('activityChart')) {
+          const activityChartCanvas = document.getElementById('activityChart').getContext('2d');
+
+          const activityChartData = {
+            labels: ['Demandes', 'Approuvés', 'En attente', 'Refusés'],
+            datasets: [{
+              data: [45, 25, 20, 10],
+              backgroundColor: [
+                'rgba(0, 0, 0, 0.7)', // Dark Gray
+                '#d4af37',            // Gold
+                'rgba(0, 0, 0, 0.2)', // Light Gray
+                'rgba(0, 0, 0, 0.4)'  // Medium Gray
+              ],
+              borderWidth: 1,
+              borderColor: '#ffffff'
+            }]
+          };
+
+          const activityChartOptions = {
+            responsive: true,
+            maintainAspectRatio: true,
+            cutoutPercentage: 70,
+            legend: {
+              display: true,
+              position: 'bottom',
+              labels: {
+                fontColor: '#333333', // Dark text for light theme
+                boxWidth: 12
+              }
+            },
+            tooltips: {
+              enabled: true
+            }
+          };
+
+          new Chart(activityChartCanvas, {
+            type: 'doughnut',
+            data: activityChartData,
+            options: activityChartOptions
+          });
+        }
+      });
+    </script>
+    <!-- End custom js for this page -->
+  </body>
+</html>
