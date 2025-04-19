@@ -1,0 +1,80 @@
+/* Import the ArenaBoost theme */
+@import '../assets/css/arenaboost-theme.css';
+
+/* Sidebar styling */
+.sidebar {
+  background-color: var(--arenaboost-black);
+}
+
+.sidebar .nav .nav-item.active > .nav-link {
+  background-color: rgba(212, 175, 55, 0.2);
+}
+
+.sidebar .nav .nav-item .nav-link:hover {
+  background-color: rgba(212, 175, 55, 0.1);
+}
+
+.sidebar .nav .nav-item .menu-icon {
+  color: var(--arenaboost-gold);
+}
+
+.sidebar-brand-wrapper {
+  background-color: var(--arenaboost-black);
+  border-bottom: 1px solid var(--arenaboost-gold);
+}
+
+.sidebar-brand-wrapper img {
+  max-height: 40px;
+}
+
+/* Navbar styling */
+.navbar {
+  background-color: var(--arenaboost-black);
+  border-bottom: 1px solid var(--arenaboost-gold);
+}
+
+.navbar .navbar-menu-wrapper {
+  background-color: var(--arenaboost-black);
+}
+
+.navbar-profile-name {
+  color: var(--arenaboost-white);
+}
+
+/* Footer styling */
+.footer {
+  background-color: var(--arenaboost-black);
+  border-top: 1px solid var(--arenaboost-gray);
+}
+
+.text-gold {
+  color: var(--arenaboost-gold) !important;
+}
+
+/* Form controls */
+.form-control {
+  background-color: var(--arenaboost-dark-gray);
+  border: 1px solid var(--arenaboost-gray);
+  color: var(--arenaboost-white);
+}
+
+.form-control:focus {
+  background-color: var(--arenaboost-dark-gray);
+  border-color: var(--arenaboost-gold);
+  color: var(--arenaboost-white);
+}
+
+/* Dropdown styling */
+.dropdown-menu {
+  background-color: var(--arenaboost-dark-gray);
+  border: 1px solid var(--arenaboost-gold);
+}
+
+.dropdown-item {
+  color: var(--arenaboost-white);
+}
+
+.dropdown-item:hover, .dropdown-item:focus {
+  background-color: rgba(212, 175, 55, 0.1);
+  color: var(--arenaboost-gold);
+}

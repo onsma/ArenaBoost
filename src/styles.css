@@ -1,0 +1,83 @@
+/* You can add global styles to this file, and also import other style files */
+
+/* Import the ArenaBoost theme */
+@import './assets/css/arenaboost-theme.css';
+
+/* Global styles for ArenaBoost */
+body {
+  background-color: #000000;
+  color: #ffffff;
+  font-family: 'Rubik', sans-serif;
+}
+
+/* Override default theme colors with ArenaBoost colors */
+:root {
+  --primary: #d4af37;
+  --secondary: #ffffff;
+  --success: #d4af37;
+  --info: #ffffff;
+  --warning: #f4cf5c;
+  --danger: #ff5252;
+  --light: #ffffff;
+  --dark: #000000;
+}
+
+/* Button styling */
+.btn-primary {
+  background-color: #d4af37;
+  border-color: #d4af37;
+  color: #000000;
+}
+
+.btn-primary:hover, .btn-primary:focus, .btn-primary:active {
+  background-color: #aa8c2c;
+  border-color: #aa8c2c;
+  color: #000000;
+}
+
+/* Card styling */
+.card {
+  background-color: #191c24;
+  border: 1px solid #2c2e33;
+  border-radius: 0.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.card-title {
+  color: #d4af37;
+  font-weight: 500;
+}
+
+/* Text colors */
+.text-gold {
+  color: #d4af37 !important;
+}
+
+.text-white {
+  color: #ffffff !important;
+}
+
+.text-black {
+  color: #000000 !important;
+}
+
+/* Icon colors */
+.icon-item {
+  color: #d4af37 !important;
+}
+
+/* Navbar and sidebar styling */
+.sidebar {
+  background-color: #000000;
+}
+
+.navbar {
+  background-color: #000000;
+  border-bottom: 1px solid #d4af37;
+}
+
+/* Custom gradient card */
+.arenaboost-gradient-card {
+  background-image: linear-gradient(to right, #000000, #191c24);
+  border: 1px solid #d4af37;
+}

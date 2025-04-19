@@ -1,0 +1,95 @@
+/* ArenaBoost Theme - Black, White, Gold color scheme */
+
+:root {
+  --arenaboost-black: #000000;
+  --arenaboost-white: #ffffff;
+  --arenaboost-gold: #d4af37;
+  --arenaboost-dark-gold: #aa8c2c;
+  --arenaboost-light-gold: #f4cf5c;
+  --arenaboost-gray: #2c2e33;
+  --arenaboost-dark-gray: #191c24;
+}
+
+/* Background colors */
+.content-wrapper {
+  background-color: var(--arenaboost-black);
+}
+
+/* Card styling */
+.card {
+  background-color: var(--arenaboost-dark-gray);
+  border: 1px solid var(--arenaboost-gray);
+}
+
+.card .card-title {
+  color: var(--arenaboost-white);
+}
+
+/* Button styling */
+.btn-primary {
+  background-color: var(--arenaboost-gold);
+  border-color: var(--arenaboost-gold);
+  color: var(--arenaboost-black);
+}
+
+.btn-primary:hover {
+  background-color: var(--arenaboost-dark-gold);
+  border-color: var(--arenaboost-dark-gold);
+  color: var(--arenaboost-black);
+}
+
+/* Icon colors */
+.icon-box-success {
+  color: var(--arenaboost-gold) !important;
+}
+
+.icon-item {
+  color: var(--arenaboost-gold) !important;
+}
+
+/* Text colors */
+.text-success {
+  color: var(--arenaboost-gold) !important;
+}
+
+/* Chart colors - override default chart colors */
+canvas {
+  --chart-color1: var(--arenaboost-black);
+  --chart-color2: var(--arenaboost-gold);
+  --chart-color3: var(--arenaboost-white);
+}
+
+/* Navbar and sidebar branding */
+.sidebar-brand-wrapper {
+  background-color: var(--arenaboost-black);
+}
+
+.navbar {
+  background-color: var(--arenaboost-black);
+}
+
+/* Custom gradient card for dashboard header */
+.card.arenaboost-gradient-card {
+  background-image: linear-gradient(to right, var(--arenaboost-black), var(--arenaboost-dark-gray));
+  border: 1px solid var(--arenaboost-gold);
+}
+
+/* Logo container */
+.arenaboost-logo-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.arenaboost-logo-container img {
+  max-width: 100%;
+  height: auto;
+}
+
+.arenaboost-tagline {
+  color: var(--arenaboost-gold);
+  font-style: italic;
+  text-align: center;
+  margin-top: 10px;
+}

@@ -1,0 +1,76 @@
+/* Dashboard component specific styles */
+
+/* Import the ArenaBoost theme */
+@import '../../../assets/css/arenaboost-theme.css';
+
+/* Card styling */
+.card {
+  transition: transform 0.3s;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3);
+}
+
+/* Icon styling */
+.icon-box-success {
+  background-color: rgba(212, 175, 55, 0.2);
+}
+
+.icon-item {
+  font-size: 1.5rem;
+}
+
+/* Stats numbers */
+.d-flex h3 {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #d4af37; /* Gold color for numbers */
+}
+
+/* Logo container */
+.arenaboost-logo-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 15px 0;
+}
+
+.arenaboost-logo-container img {
+  max-width: 250px;
+  height: auto;
+}
+
+/* Gradient card */
+.arenaboost-gradient-card {
+  border: 1px solid #d4af37;
+  background: linear-gradient(to right, #000000, #191c24);
+}
+
+/* Chart containers */
+.chart-container {
+  position: relative;
+  margin: auto;
+  height: 250px;
+}
+
+/* Card titles */
+.card-title {
+  color: #d4af37 !important;
+  font-weight: 500;
+  margin-bottom: 20px;
+}
+
+/* Text styling */
+.text-gold {
+  color: #d4af37 !important;
+}
+
+.text-white {
+  color: #ffffff !important;
+}
+
+.text-black {
+  color: #000000 !important;
+}
