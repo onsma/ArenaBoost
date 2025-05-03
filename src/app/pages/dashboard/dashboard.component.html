@@ -1,0 +1,64 @@
+<div class="dashboard-container">
+  <!-- Header -->
+  <div class="dashboard-header">
+    <h1 class="dashboard-title">Tableau de Bord</h1>
+  </div>
+
+  <!-- Main Content -->
+  <div class="dashboard-content">
+    <!-- Stats Cards -->
+    <div class="stats-cards">
+      <div class="stat-card">
+        <h3>Total des Prêts</h3>
+        <p class="stat-value">{{ loanStats?.totalLoans | number }}</p>
+      </div>
+      <div class="stat-card">
+        <h3>Utilisateurs Actifs</h3>
+        <p class="stat-value">{{ activeUsers?.length | number }}</p>
+      </div>
+      <div class="stat-card">
+        <h3>Montant Total</h3>
+        <p class="stat-value">{{ loanStats?.totalAmount | currency:'TND' }}</p>
+      </div>
+      <div class="stat-card">
+        <h3>Nouvelles Demandes</h3>
+        <p class="stat-value">{{ loanStats?.pendingLoans | number }}</p>
+      </div>
+    </div>
+
+    <!-- Charts -->
+    <div class="charts-container">
+      <div class="chart-card">
+        <h4>État des Prêts</h4>
+        <canvas #loanStatusChart></canvas>
+      </div>
+      <div class="chart-card">
+        <h4>Activité Récente</h4>
+        <canvas #activityChart></canvas>
+      </div>
+    </div>
+
+    <!-- Recent Users -->
+    <div class="recent-users">
+      <h3>Utilisateurs Actifs Récents</h3>
+      <div class="users-table">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Nom</th>
+              <th>Email</th>
+              <th>Dernière Activité</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let user of activeUsers">
+              <td>{{ user.name }}</td>
+              <td>{{ user.email }}</td>
+              <td>{{ user.lastActive | date }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

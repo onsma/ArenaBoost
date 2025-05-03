@@ -1,0 +1,50 @@
+.auth-background {
+  background-image: url('/assets/images/pexels-szafran-16627321.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+}
+
+.auth-overlay {
+  background-color: rgba(0, 0, 0, 0.7);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.auth-card {
+  background-color: rgba(255, 255, 255, 0.95);
+  border-radius: 10px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+}
+
+.nav-tabs .nav-link {
+  color: #555;
+  font-weight: 500;
+}
+
+.nav-tabs .nav-link.active {
+  color: #000;
+  font-weight: 600;
+  border-bottom: 2px solid #c9b037;
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: #c9b037;
+  box-shadow: 0 0 0 0.25rem rgba(201, 176, 55, 0.25);
+}
+
+.btn-dark:hover {
+  background-color: #333;
+}
+
+.text-warning {
+  color: #c9b037 !important;
+}
+
+.text-warning:hover {
+  color: darken(#c9b037, 10%) !important;
+}

@@ -1,0 +1,31 @@
+/* Project section styles */
+.text-white {
+  color: var(--light-color) !important;
+}
+
+.display-4 {
+  font-weight: 800;
+  line-height: 1.2;
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
+}
+
+.lead {
+  text-shadow: 1px 1px 6px rgba(0, 0, 0, 0.7);
+  font-weight: 500;
+}
+
+.bg-dark {
+  background-color: var(--primary-color) !important;
+}
+
+.btn-warning {
+  background-color: var(--accent-color);
+  border-color: var(--accent-color);
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+.btn-warning:hover {
+  background-color: darken(#c9b037, 10%);
+  border-color: darken(#c9b037, 10%);
+}

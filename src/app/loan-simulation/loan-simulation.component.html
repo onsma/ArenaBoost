@@ -1,0 +1,100 @@
+<section class="loan-simulation">
+  <div class="container py-5">
+    <div class="row justify-content-center">
+      <div class="col-md-10">
+        <div class="card shadow">
+          <div class="card-header">
+            <h2 class="mb-0">Simulation de Prêt</h2>
+            <p class="text-muted mb-0">Estimez vos mensualités et le coût total de votre crédit sportif</p>
+          </div>
+          <div class="card-body">
+            <form [formGroup]="simulationForm">
+              <div class="row mb-4">
+                <div class="col-md-6">
+                  <div class="form-group mb-4">
+                    <label for="loanType" class="form-label">Type de crédit</label>
+                    <select class="form-select" id="loanType" formControlName="loanType">
+                      <option *ngFor="let type of loanTypes" [value]="type.name">
+                        {{ type.name }} - {{ type.description }}
+                      </option>
+                    </select>
+                  </div>
+
+                  <div class="form-group mb-4">
+                    <label for="amount" class="form-label">Montant emprunté</label>
+                    <div class="d-flex align-items-center">
+                      <input type="range" class="form-range flex-grow-1" id="amount" 
+                             formControlName="amount" 
+                             [min]="minAmount" 
+                             [max]="maxAmount" 
+                             [step]="1000">
+                      <span class="amount-value ms-3">{{ formatAmount(simulationForm.value.amount) }}</span>
+                    </div>
+                  </div>
+
+                  <div class="form-group mb-4">
+                    <label for="duration" class="form-label">Durée du prêt</label>
+                    <div class="d-flex align-items-center">
+                      <input type="range" class="form-range flex-grow-1" id="duration" 
+                             formControlName="duration" 
+                             [min]="minDuration" 
+                             [max]="maxDuration" 
+                             [step]="1">
+                      <span class="duration-value ms-3">{{ formatDuration(simulationForm.value.duration) }}</span>
+                    </div>
+                  </div>
+
+                  <div class="form-group mb-4">
+                    <label for="interestRate" class="form-label">Taux d'intérêt</label>
+                    <div class="d-flex align-items-center">
+                      <input type="range" class="form-range flex-grow-1" id="interestRate" 
+                             formControlName="interestRate" 
+                             [min]="minInterestRate" 
+                             [max]="maxInterestRate" 
+                             [step]="0.1">
+                      <span class="interest-value ms-3">{{ formatInterestRate(simulationForm.value.interestRate) }}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-md-6" *ngIf="showResults && simulationResult">
+                  <div class="results-container">
+                    <h3 class="results-title">Résultat de la simulation</h3>
+                    
+                    <div class="result-item">
+                      <div class="result-label">Mensualité</div>
+                      <div class="result-value">{{ formatAmount(simulationResult.monthlyPayment) }}</div>
+                    </div>
+                    
+                    <div class="result-item">
+                      <div class="result-label">Coût total du crédit</div>
+                      <div class="result-value">{{ formatAmount(simulationResult.totalAmount) }}</div>
+                    </div>
+                    
+                    <div class="result-item">
+                      <div class="result-label">Montant total des intérêts</div>
+                      <div class="result-value">{{ formatAmount(simulationResult.totalInterest) }}</div>
+                    </div>
+                    
+                    <div class="actions mt-4">
+                      <button type="button" class="btn btn-primary" routerLink="/loan-request">
+                        Faire une demande de prêt
+                      </button>
+                      <button type="button" class="btn btn-outline-secondary ms-2" (click)="resetForm()">
+                        Réinitialiser
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div *ngIf="error" class="alert alert-danger">
+                {{ error }}
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
