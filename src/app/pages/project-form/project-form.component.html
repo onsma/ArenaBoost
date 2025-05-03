@@ -1,0 +1,136 @@
+<!-- Page Header -->
+<section class="bg-dark text-white py-5">
+    <div class="container py-4">
+        <h1 class="display-4 fw-bold mb-4 text-white">{{ isEditMode ? 'Edit Project' : 'Create New Project' }}</h1>
+        <p class="lead text-white">{{ isEditMode ? 'Update your project details' : 'Share your sports project with
+            potential investors and supporters' }}</p>
+    </div>
+</section>
+
+<!-- Project Form -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <!-- Loading State -->
+                <div *ngIf="loading" class="text-center py-5">
+                    <div class="spinner-border text-warning" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-3">{{ isEditMode ? 'Loading project details...' : 'Creating project...' }}</p>
+                </div>
+
+                <!-- Error State -->
+                <div *ngIf="error && !loading" class="alert alert-danger">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    {{ errorMessage || 'There was an error. Please try again later.' }}
+                </div>
+
+                <!-- Form -->
+                <div *ngIf="!loading" class="card border-0 shadow-sm">
+                    <div class="card-body p-4 p-md-5">
+                        <form [formGroup]="projectForm" (ngSubmit)="onSubmit()">
+                            <!-- Project Name -->
+                            <div class="mb-4">
+                                <label for="name" class="form-label">Project Name <span
+                                        class="text-danger">*</span></label>
+                                <input type="text" id="name" formControlName="name" class="form-control"
+                                    [ngClass]="{'is-invalid': hasError('name', 'required') || hasError('name', 'minlength') || hasError('name', 'maxlength')}"
+                                    placeholder="Enter project name">
+                                <div *ngIf="hasError('name', 'required')" class="invalid-feedback">
+                                    Project name is required
+                                </div>
+                                <div *ngIf="hasError('name', 'minlength')" class="invalid-feedback">
+                                    Project name must be at least 5 characters
+                                </div>
+                                <div *ngIf="hasError('name', 'maxlength')" class="invalid-feedback">
+                                    Project name cannot exceed 100 characters
+                                </div>
+                            </div>
+
+                            <!-- Project Category -->
+                            <div class="mb-4">
+                                <label for="category" class="form-label">Category <span
+                                        class="text-danger">*</span></label>
+                                <select id="category" formControlName="category" class="form-select"
+                                    [ngClass]="{'is-invalid': hasError('category', 'required')}">
+                                    <option *ngFor="let category of categories" [value]="category">{{ category }}
+                                    </option>
+                                </select>
+                                <div *ngIf="hasError('category', 'required')" class="invalid-feedback">
+                                    Please select a category
+                                </div>
+                            </div>
+
+                            <!-- Project Description -->
+                            <div class="mb-4">
+                                <label for="description" class="form-label">Description <span
+                                        class="text-danger">*</span></label>
+                                <textarea id="description" formControlName="description" class="form-control"
+                                    [ngClass]="{'is-invalid': hasError('description', 'required') || hasError('description', 'minlength')}"
+                                    rows="6" placeholder="Describe your project in detail"></textarea>
+                                <div *ngIf="hasError('description', 'required')" class="invalid-feedback">
+                                    Project description is required
+                                </div>
+                                <div *ngIf="hasError('description', 'minlength')" class="invalid-feedback">
+                                    Description must be at least 20 characters
+                                </div>
+                            </div>
+
+                            <!-- Funding Goal -->
+                            <div class="mb-4">
+                                <label for="goal_amount" class="form-label">Funding Goal (in $) <span
+                                        class="text-danger">*</span></label>
+                                <input type="number" id="goal_amount" formControlName="goal_amount" class="form-control"
+                                    [ngClass]="{'is-invalid': hasError('goal_amount', 'required') || hasError('goal_amount', 'min')}"
+                                    placeholder="Enter funding goal amount">
+                                <div *ngIf="hasError('goal_amount', 'required')" class="invalid-feedback">
+                                    Funding goal is required
+                                </div>
+                                <div *ngIf="hasError('goal_amount', 'min')" class="invalid-feedback">
+                                    Funding goal must be at least $1,000
+                                </div>
+                            </div>
+
+                            <!-- Project Duration -->
+                            <div class="mb-4">
+                                <label for="duration_days" class="form-label">Project Duration (in days) <span
+                                        class="text-danger">*</span></label>
+                                <input type="number" id="duration_days" formControlName="duration_days"
+                                    class="form-control"
+                                    [ngClass]="{'is-invalid': hasError('duration_days', 'required') || hasError('duration_days', 'min') || hasError('duration_days', 'max')}"
+                                    placeholder="Enter project duration in days">
+                                <div *ngIf="hasError('duration_days', 'required')" class="invalid-feedback">
+                                    Project duration is required
+                                </div>
+                                <div *ngIf="hasError('duration_days', 'min')" class="invalid-feedback">
+                                    Duration must be at least 1 day
+                                </div>
+                                <div *ngIf="hasError('duration_days', 'max')" class="invalid-feedback">
+                                    Duration cannot exceed 365 days
+                                </div>
+                            </div>
+
+                            <!-- Project Image URL -->
+                            <div class="mb-4">
+                                <label for="image" class="form-label">Image URL (optional)</label>
+                                <input type="text" id="image" formControlName="image" class="form-control"
+                                    placeholder="Enter URL for project image">
+                                <small class="form-text text-muted">Provide a URL to an image that represents your
+                                    project</small>
+                            </div>
+
+                            <!-- Form Actions -->
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                                <a routerLink="/projects" class="btn btn-outline-secondary me-md-2">Cancel</a>
+                                <button type="submit" class="btn btn-warning" [disabled]="loading">
+                                    {{ isEditMode ? 'Update Project' : 'Create Project' }}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

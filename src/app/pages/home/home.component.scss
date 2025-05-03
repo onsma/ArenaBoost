@@ -1,0 +1,50 @@
+.hero-section {
+  color: white;
+
+  .hero-bg {
+    background-image: url('/assets/images/pexels-szafran-16627321.jpg');
+    background-size: cover;
+    background-position: center;
+    position: relative;
+  }
+
+  h1 {
+    font-weight: 800;
+    line-height: 1.2;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
+    color: var(--light-color);
+  }
+
+  p.lead {
+    text-shadow: 1px 1px 6px rgba(0, 0, 0, 0.7);
+    color: var(--light-color);
+    font-weight: 500;
+  }
+
+  .btn-warning {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+    color: var(--primary-color);
+  }
+
+  .btn-warning:hover {
+    background-color: darken(#c9b037, 10%);
+    border-color: darken(#c9b037, 10%);
+  }
+}
+
+.bg-warning {
+  background-color: var(--accent-color) !important;
+}
+
+.text-warning {
+  color: var(--accent-color) !important;
+}
+
+.card {
+  transition: transform 0.3s ease;
+
+  &:hover {
+    transform: translateY(-5px);
+  }
+}

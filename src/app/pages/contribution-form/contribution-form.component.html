@@ -1,0 +1,156 @@
+<!-- Loading State -->
+<div *ngIf="loadingProject" class="container py-5 text-center">
+    <div class="spinner-border text-warning" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="mt-3">Loading project details...</p>
+</div>
+
+<!-- Error State -->
+<div *ngIf="error && !loadingProject && !project" class="container py-5">
+    <div class="alert alert-danger">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        {{ errorMessage || 'There was an error loading the project. Please try again later.' }}
+    </div>
+    <div class="text-center mt-4">
+        <a routerLink="/projects" class="btn btn-outline-dark">Back to Projects</a>
+    </div>
+</div>
+
+<!-- Contribution Form -->
+<div *ngIf="project && !loadingProject">
+    <!-- Page Header -->
+    <section class="bg-dark text-white py-5">
+        <div class="container py-4">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h1 class="display-4 fw-bold mb-3 text-white">Support This Project</h1>
+                    <h2 class="h3 mb-4 text-white">{{ project.name }}</h2>
+                    <div class="progress mb-3" style="height: 10px;">
+                        <div class="progress-bar bg-warning"
+                            [style.width.%]="(project.current_amount / project.goal_amount) * 100"
+                            [attr.aria-valuenow]="(project.current_amount / project.goal_amount) * 100"
+                            aria-valuemin="0" aria-valuemax="100">
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between mb-4">
+                        <span class="h4 mb-0 text-white">{{ project.current_amount | currency }}</span>
+                        <span class="text-white">of {{ project.goal_amount | currency }} goal</span>
+                    </div>
+                </div>
+                <div class="col-lg-4 text-center text-lg-end">
+                    <button (click)="navigateToProject()" class="btn btn-outline-light btn-lg px-4">
+                        <i class="bi bi-arrow-left me-2"></i>Back to Project
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Form Section -->
+    <section class="py-5 bg-light">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <!-- Success Message -->
+                    <div *ngIf="success" class="alert alert-success mb-4">
+                        <i class="bi bi-check-circle-fill me-2"></i>
+                        <strong>Thank you for your contribution!</strong> Your support helps make this project possible.
+                        <p class="mt-2 mb-0">A confirmation email has been sent to your email address with details about
+                            your contribution.</p>
+                    </div>
+
+                    <!-- Error Message -->
+                    <div *ngIf="error && !loadingProject && project" class="alert alert-danger mb-4">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        {{ errorMessage || 'There was an error processing your contribution. Please try again later.' }}
+                    </div>
+
+                    <!-- Loading State -->
+                    <div *ngIf="loading" class="text-center py-5">
+                        <div class="spinner-border text-warning" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p class="mt-3">Processing your contribution...</p>
+                    </div>
+
+                    <!-- Form -->
+                    <div *ngIf="!loading" class="card border-0 shadow-sm">
+                        <div class="card-body p-4 p-md-5">
+                            <h3 class="card-title mb-4">Make a Contribution</h3>
+                            <form [formGroup]="contributionForm" (ngSubmit)="onSubmit()">
+                                <!-- Contribution Amount -->
+                                <div class="mb-4">
+                                    <label for="amount" class="form-label">Contribution Amount ($) <span
+                                            class="text-danger">*</span></label>
+                                    <input type="number" id="amount" formControlName="amount" class="form-control"
+                                        [ngClass]="{'is-invalid': hasError('amount', 'required') || hasError('amount', 'min')}"
+                                        placeholder="Enter amount">
+                                    <div *ngIf="hasError('amount', 'required')" class="invalid-feedback">
+                                        Contribution amount is required
+                                    </div>
+                                    <div *ngIf="hasError('amount', 'min')" class="invalid-feedback">
+                                        Minimum contribution is $10
+                                    </div>
+                                </div>
+
+                                <!-- Supporter Name -->
+                                <div class="mb-4">
+                                    <label for="supporter_name" class="form-label">Your Name <span
+                                            class="text-danger">*</span></label>
+                                    <input type="text" id="supporter_name" formControlName="supporter_name"
+                                        class="form-control"
+                                        [ngClass]="{'is-invalid': hasError('supporter_name', 'required') || hasError('supporter_name', 'minlength')}"
+                                        placeholder="Enter your name">
+                                    <div *ngIf="hasError('supporter_name', 'required')" class="invalid-feedback">
+                                        Your name is required
+                                    </div>
+                                    <div *ngIf="hasError('supporter_name', 'minlength')" class="invalid-feedback">
+                                        Name must be at least 3 characters
+                                    </div>
+                                </div>
+
+                                <!-- Email -->
+                                <div class="mb-4">
+                                    <label for="email" class="form-label">Email <span
+                                            class="text-danger">*</span></label>
+                                    <input type="email" id="email" formControlName="email" class="form-control"
+                                        [ngClass]="{'is-invalid': hasError('email', 'required') || hasError('email', 'email')}"
+                                        placeholder="Enter your email">
+                                    <div *ngIf="hasError('email', 'required')" class="invalid-feedback">
+                                        Email is required
+                                    </div>
+                                    <div *ngIf="hasError('email', 'email')" class="invalid-feedback">
+                                        Please enter a valid email address
+                                    </div>
+                                </div>
+
+                                <!-- Reward -->
+                                <div class="mb-4">
+                                    <label for="reward" class="form-label">Reward</label>
+                                    <select id="reward" formControlName="reward" class="form-select">
+                                        <option value="Thank you message">Thank you message</option>
+                                        <option value="Project updates">Project updates</option>
+                                        <option value="Supporter certificate">Supporter certificate</option>
+                                        <option value="Project merchandise">Project merchandise</option>
+                                        <option value="VIP access">VIP access to events</option>
+                                    </select>
+                                    <small class="form-text text-muted">Select a reward for your contribution</small>
+                                </div>
+
+                                <!-- Form Actions -->
+                                <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                                    <button type="button" (click)="navigateToProject()"
+                                        class="btn btn-outline-secondary me-md-2">Cancel</button>
+                                    <button type="submit" class="btn btn-warning" [disabled]="loading">
+                                        <i class="bi bi-heart-fill me-2"></i>Support Project
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>

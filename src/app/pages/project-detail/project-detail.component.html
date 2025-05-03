@@ -1,0 +1,152 @@
+<!-- Loading State -->
+<div *ngIf="loading" class="container py-5 text-center">
+    <div class="spinner-border text-warning" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="mt-3">Loading project details...</p>
+</div>
+
+<!-- Error State -->
+<div *ngIf="error && !loading" class="container py-5">
+    <div class="alert alert-danger">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        {{ errorMessage || 'There was an error loading the project. Please try again later.' }}
+    </div>
+    <div class="text-center mt-4">
+        <a routerLink="/projects" class="btn btn-outline-dark">Back to Projects</a>
+    </div>
+</div>
+
+<!-- Project Details -->
+<div *ngIf="project && !loading && !error">
+    <!-- Project Header -->
+    <section class="bg-dark text-white py-5">
+        <div class="container py-4">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h1 class="display-4 fw-bold mb-3 text-white">{{ project.name }}</h1>
+                    <div class="d-flex align-items-center mb-4">
+                        <span class="badge bg-warning text-dark me-3">{{ project.category }}</span>
+                        <span class="text-white"><i class="bi bi-calendar-event me-2"></i>Started: {{ project.start_date
+                            | date }}</span>
+                    </div>
+                    <div class="progress mb-3" style="height: 10px;">
+                        <div class="progress-bar bg-warning" [style.width.%]="getProgressPercentage()"
+                            [attr.aria-valuenow]="getProgressPercentage()" aria-valuemin="0" aria-valuemax="100">
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between mb-4">
+                        <span class="h4 mb-0 text-white">{{ project.current_amount | currency }}</span>
+                        <span class="text-white">of {{ project.goal_amount | currency }} goal</span>
+                    </div>
+                    <div class="d-flex flex-wrap gap-3">
+                        <button (click)="navigateToContribute()" class="btn btn-warning btn-lg px-4 fw-bold">
+                            <i class="bi bi-heart-fill me-2"></i>Support This Project
+                        </button>
+                        <button (click)="navigateToEdit()" class="btn btn-outline-light btn-lg px-4">
+                            <i class="bi bi-pencil-square me-2"></i>Edit Project
+                        </button>
+                        <button (click)="downloadReport()" class="btn btn-outline-light btn-lg px-4">
+                            <i class="bi bi-file-earmark-pdf me-2"></i>Download Report
+                        </button>
+                    </div>
+                </div>
+                <div class="col-lg-4 mt-4 mt-lg-0">
+                    <div class="card border-0 shadow">
+                        <div class="card-body p-4">
+                            <h5 class="card-title mb-3">Project Stats</h5>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span>Days Remaining:</span>
+                                    <span class="badge bg-warning rounded-pill">{{ project.days_remaining }}</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span>Total Duration:</span>
+                                    <span>{{ project.duration_days }} days</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span>Current Expenses:</span>
+                                    <span>{{ project.total_expenses | currency }}</span>
+                                </li>
+                                <li *ngIf="analytics"
+                                    class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span>Contributors:</span>
+                                    <span>{{ analytics.numberOfContributions }}</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Project Image -->
+    <section class="py-5">
+        <div class="container-fluid p-0">
+            <div class="row g-0">
+                <div class="col-12">
+                    <img [src]="project.image || project.imageUrl || '/assets/images/soccer-field-night.jpg'"
+                        [alt]="project.name" class="img-fluid w-100" style="max-height: 500px; object-fit: cover;">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Project Description -->
+    <section class="py-5 bg-light">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-body p-4">
+                            <h2 class="card-title h3 mb-4">About This Project</h2>
+                            <p class="card-text">{{ project.description }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <!-- Project Prediction -->
+                    <div *ngIf="prediction" class="card border-0 shadow-sm mb-4">
+                        <div class="card-body p-4">
+                            <h3 class="card-title h4 mb-3">Project Prediction</h3>
+                            <div class="mb-3">
+                                <span class="badge"
+                                    [ngClass]="{'bg-success': prediction.predictedSuccess, 'bg-danger': !prediction.predictedSuccess}">
+                                    {{ prediction.predictedSuccess ? 'Likely to Succeed' : 'At Risk' }}
+                                </span>
+                                <span class="ms-2">Confidence: {{ prediction.confidenceScore | percent }}</span>
+                            </div>
+                            <p class="mb-2">
+                                <strong>Risk Level:</strong>
+                                <span [ngClass]="{
+                  'text-success': prediction.riskLevel === 'Low',
+                  'text-warning': prediction.riskLevel === 'Medium',
+                  'text-danger': prediction.riskLevel === 'High'
+                }">{{ prediction.riskLevel }}</span>
+                            </p>
+                            <p class="mb-3">
+                                <strong>Estimated Completion:</strong> {{ prediction.estimatedCompletionDate | date }}
+                            </p>
+                            <h4 class="h6 mb-2">Recommendations:</h4>
+                            <ul class="list-group list-group-flush">
+                                <li *ngFor="let rec of prediction.recommendations" class="list-group-item">
+                                    <i class="bi bi-lightbulb-fill text-warning me-2"></i>{{ rec }}
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Related Projects CTA -->
+    <section class="py-5 bg-warning">
+        <div class="container py-4 text-center">
+            <h2 class="mb-4">Discover More Projects</h2>
+            <p class="lead mb-4">Explore other exciting sports projects seeking investment and support.</p>
+            <a routerLink="/projects" class="btn btn-dark btn-lg px-5">View All Projects</a>
+        </div>
+    </section>
+</div>
