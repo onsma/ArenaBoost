@@ -1,0 +1,100 @@
+<div class="loan-list-container">
+  <div class="loan-list-header">
+    <div class="header-content">
+      <h1>Liste des Prêts</h1>
+      <p class="subtitle">Consultez tous les prêts disponibles dans notre système</p>
+    </div>
+    <div class="header-actions">
+      <button class="refresh-button" (click)="loadLoans()">
+        <i class="refresh-icon">↻</i> Actualiser
+      </button>
+    </div>
+  </div>
+
+  <div class="loan-summary">
+    <div class="summary-card">
+      <div class="summary-icon">📊</div>
+      <div class="summary-content">
+        <h3>{{ loans.length }}</h3>
+        <p>Prêts au total</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading Indicator -->
+  <div class="loading-container" *ngIf="loading">
+    <div class="spinner"></div>
+    <p>Chargement des prêts...</p>
+  </div>
+
+  <!-- Error Message -->
+  <div class="error-container" *ngIf="error">
+    <div class="error-message">
+      <i class="error-icon">⚠️</i>
+      <p>{{ error }}</p>
+    </div>
+    <button class="retry-button" (click)="loadLoans()">Réessayer</button>
+  </div>
+
+  <!-- Loan List Table -->
+  <div class="loan-table-container" *ngIf="!loading && !error && loans.length > 0">
+    <table class="loan-table modern-table">
+      <thead>
+        <tr>
+          <th class="header-id">ID</th>
+          <th class="header-amount">Montant</th>
+          <th class="header-type">Type</th>
+          <th class="header-rate">Taux d'intérêt</th>
+          <th class="header-duration">Durée (mois)</th>
+          <th class="header-status">Statut</th>
+          <th class="header-date">Date de demande</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let loan of paginatedLoans">
+          <td class="loan-id">{{ loan.id_loan }}</td>
+          <td class="loan-amount">{{ loan.amount | currency:'TND':'symbol':'1.0-2' }}</td>
+          <td class="loan-type">{{ loan.loantype.name }}</td>
+          <td class="loan-rate">{{ loan.interest_rate }}%</td>
+          <td class="loan-duration">{{ loan.refund_duration }}</td>
+          <td class="loan-status">
+            <span class="status-badge" [ngClass]="getStatusClass(loan.status || '')">
+              {{ getStatusLabel(loan.status || '') }}
+            </span>
+          </td>
+          <td class="loan-date">{{ loan.requestDate | date:'dd/MM/yyyy' }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Pagination -->
+    <div class="pagination-container" *ngIf="totalPages > 1">
+      <div class="pagination">
+        <button class="pagination-button" [disabled]="currentPage === 1" (click)="previousPage()">
+          <span class="pagination-icon">«</span>
+        </button>
+
+        <button
+          *ngFor="let page of getPageNumbers()"
+          class="pagination-button"
+          [class.active]="page === currentPage"
+          (click)="goToPage(page)">
+          {{ page }}
+        </button>
+
+        <button class="pagination-button" [disabled]="currentPage === totalPages" (click)="nextPage()">
+          <span class="pagination-icon">»</span>
+        </button>
+      </div>
+
+      <div class="pagination-info">
+        Page {{ currentPage }} sur {{ totalPages }} ({{ loans.length }} prêts au total)
+      </div>
+    </div>
+  </div>
+
+  <!-- No Loans Message -->
+  <div class="no-loans-container" *ngIf="!loading && !error && loans.length === 0">
+    <p>Aucun prêt disponible pour le moment.</p>
+  </div>
+</div>

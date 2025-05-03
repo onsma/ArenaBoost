@@ -1,0 +1,139 @@
+<section class="py-5 min-vh-100 d-flex align-items-center auth-background">
+  <div class="auth-overlay"></div>
+  <div class="container py-5 position-relative">
+    <div class="row justify-content-center">
+      <div class="col-lg-5">
+        <div class="card border-0 auth-card">
+          <div class="card-body p-5">
+            <!-- Logo -->
+            <div class="text-center mb-4">
+              <div class="mb-3">
+                <img src="assets/images/LOGO.png" alt="ArenaBoost Logo" class="img-fluid" style="max-width: 220px;">
+              </div>
+              <p class="text-muted">Sign in to your account</p>
+            </div>
+
+            <!-- Tabs -->
+            <ul class="nav nav-tabs nav-fill mb-4" id="authTabs" role="tablist">
+              <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="login-tab" data-bs-toggle="tab" data-bs-target="#login" type="button" role="tab" aria-controls="login" aria-selected="true">Login</button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link" id="register-tab" data-bs-toggle="tab" data-bs-target="#register" type="button" role="tab" aria-controls="register" aria-selected="false">Register</button>
+              </li>
+            </ul>
+
+            <!-- Tab Content -->
+            <div class="tab-content" id="authTabsContent">
+              <!-- Login Form -->
+              <div class="tab-pane fade show active" id="login" role="tabpanel" aria-labelledby="login-tab">
+                <form>
+                  <div class="mb-4">
+                    <label for="loginEmail" class="form-label">Email address</label>
+                    <input type="email" class="form-control form-control-lg" id="loginEmail" placeholder="name@example.com">
+                  </div>
+                  <div class="mb-4">
+                    <label for="loginPassword" class="form-label">Password</label>
+                    <input type="password" class="form-control form-control-lg" id="loginPassword" placeholder="Enter your password">
+                  </div>
+                  <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div class="form-check">
+                      <input type="checkbox" class="form-check-input" id="rememberMe">
+                      <label class="form-check-label" for="rememberMe">Remember me</label>
+                    </div>
+                    <a href="#" class="text-warning">Forgot password?</a>
+                  </div>
+                  <div class="d-grid mb-3">
+                    <button type="submit" class="btn btn-dark py-2">Sign in</button>
+                  </div>
+                  <div class="text-center mb-2">
+                    <span class="text-muted">Don't have an account? </span>
+                    <a href="javascript:void(0)" class="text-warning" (click)="switchToRegister()">Register now</a>
+                  </div>
+                </form>
+              </div>
+
+              <!-- Register Form -->
+              <div class="tab-pane fade" id="register" role="tabpanel" aria-labelledby="register-tab">
+                <form>
+                  <div class="row mb-3">
+                    <div class="col-md-6 mb-3 mb-md-0">
+                      <label for="registerFirstName" class="form-label">First Name</label>
+                      <input type="text" class="form-control form-control-lg" id="registerFirstName" placeholder="First name">
+                    </div>
+                    <div class="col-md-6">
+                      <label for="registerLastName" class="form-label">Last Name</label>
+                      <input type="text" class="form-control form-control-lg" id="registerLastName" placeholder="Last name">
+                    </div>
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="registerEmail" class="form-label">Email address</label>
+                    <input type="email" class="form-control form-control-lg" id="registerEmail" placeholder="name@example.com">
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="registerPhone" class="form-label">Phone Number</label>
+                    <input type="tel" class="form-control form-control-lg" id="registerPhone" placeholder="+1 (123) 456-7890">
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="registerPassword" class="form-label">Password</label>
+                    <input type="password" class="form-control form-control-lg" id="registerPassword" placeholder="Create a password">
+                    <div class="form-text">Password must be at least 8 characters with letters, numbers and special characters</div>
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="registerConfirmPassword" class="form-label">Confirm Password</label>
+                    <input type="password" class="form-control form-control-lg" id="registerConfirmPassword" placeholder="Confirm your password">
+                  </div>
+
+                  <div class="mb-4">
+                    <label for="registerRole" class="form-label">I am registering as</label>
+                    <select class="form-select form-select-lg" id="registerRole">
+                      <option selected disabled>Select your role</option>
+                      <option value="athlete">Athlete</option>
+                      <option value="club">Club Manager</option>
+                      <option value="investor">Investor</option>
+                      <option value="supporter">Supporter</option>
+                    </select>
+                  </div>
+
+                  <div class="mb-4 form-check">
+                    <input type="checkbox" class="form-check-input" id="termsAgree">
+                    <label class="form-check-label" for="termsAgree">I agree to the <a href="#" class="text-warning">Terms of Service</a> and <a href="#" class="text-warning">Privacy Policy</a></label>
+                  </div>
+
+                  <div class="mb-3 form-check">
+                    <input type="checkbox" class="form-check-input" id="marketingAgree">
+                    <label class="form-check-label" for="marketingAgree">I would like to receive updates about ArenaBoost services, news and events</label>
+                  </div>
+
+                  <div class="d-grid mt-4 mb-3">
+                    <button type="submit" class="btn btn-dark py-2">Create Account</button>
+                  </div>
+                  <div class="text-center mb-2">
+                    <span class="text-muted">Already have an account? </span>
+                    <a href="javascript:void(0)" class="text-warning" (click)="switchToLogin()">Sign in</a>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Social Login -->
+        <div class="card border-0 auth-card mt-4">
+          <div class="card-body p-4">
+            <p class="text-center mb-3">Or sign in with</p>
+            <div class="d-flex justify-content-center gap-3">
+              <button class="btn btn-outline-secondary"><i class="bi bi-google me-2"></i>Google</button>
+              <button class="btn btn-outline-secondary"><i class="bi bi-facebook me-2"></i>Facebook</button>
+              <button class="btn btn-outline-secondary"><i class="bi bi-linkedin me-2"></i>LinkedIn</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
