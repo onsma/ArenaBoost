@@ -31,7 +31,7 @@ public class PdfService {
         }
 
         User user = userOptional.get();
-        List<Loan> loans = loanRepository.findByUser(user); // ✅ Correction pour récupérer les prêts de l'utilisateur
+        List<Loan> loans = loanRepository.findByUser(user); //  récupérer les prêts de l'utilisateur
 
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
             PdfWriter writer = new PdfWriter(baos);

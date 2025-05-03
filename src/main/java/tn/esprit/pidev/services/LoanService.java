@@ -18,6 +18,7 @@ import tn.esprit.pidev.repositories.UserRepository;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class LoanService {
@@ -93,6 +94,7 @@ public class LoanService {
 
     public LoanStatisticsDTO getLoanStatistics() {
         List<Loan> allLoans = loanRepository.findAll();
+        System.out.println("Found " + allLoans.size() + " loans in the database");
 
         long totalLoans = allLoans.size();
         double totalAmount = allLoans.stream().mapToDouble(Loan::getAmount).sum();
@@ -102,9 +104,43 @@ public class LoanService {
         long approvedLoans = allLoans.stream().filter(loan -> loan.getStatus().name().equalsIgnoreCase("APPROVED")).count();
         long rejectedLoans = allLoans.stream().filter(loan -> loan.getStatus().name().equalsIgnoreCase("REJECTED")).count();
 
+        System.out.println("Loan statistics: " + totalLoans + " total, " + pendingLoans + " pending, " +
+                          approvedLoans + " approved, " + rejectedLoans + " rejected, " +
+                          totalAmount + " total amount, " + averageDuration + " avg duration");
+
         return new LoanStatisticsDTO(totalLoans, totalAmount, averageDuration, pendingLoans, approvedLoans, rejectedLoans);
     }
     // 🎯 Recherche avancée des prêts avec Criteria API
+    // Récupérer les prêts récents (derniers 30 jours)
+    public List<Loan> getRecentLoans() {
+        LocalDate thirtyDaysAgo = LocalDate.now().minusDays(30);
+        List<Loan> recentLoans = loanRepository.findAll().stream()
+                .filter(loan -> loan.getRequestDate().isAfter(thirtyDaysAgo))
+                .collect(Collectors.toList());
+        System.out.println("Found " + recentLoans.size() + " recent loans");
+        return recentLoans;
+    }
+
+    // Récupérer les prêts en cours (status = PENDING)
+    public List<Loan> getCurrentLoans() {
+        List<Loan> currentLoans = loanRepository.findAll().stream()
+                .filter(loan -> loan.getStatus() == Status.pending)
+                .collect(Collectors.toList());
+        System.out.println("Found " + currentLoans.size() + " current loans with status PENDING");
+        return currentLoans;
+    }
+
+    // Récupérer les prêts récemment approuvés
+    public List<Loan> getRecentlyApprovedLoans() {
+        LocalDate thirtyDaysAgo = LocalDate.now().minusDays(30);
+        List<Loan> approvedLoans = loanRepository.findAll().stream()
+                .filter(loan -> loan.getStatus() == Status.approved)
+                .filter(loan -> loan.getRequestDate().isAfter(thirtyDaysAgo))
+                .collect(Collectors.toList());
+        System.out.println("Found " + approvedLoans.size() + " recently approved loans");
+        return approvedLoans;
+    }
+
     public List<Loan> searchLoans(LoanSearchCriteria criteria) {
         Specification<Loan> spec = (root, query, cb) -> {
             Predicate predicate = cb.conjunction();
