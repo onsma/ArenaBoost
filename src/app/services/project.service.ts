@@ -7,6 +7,16 @@ import { Contribution } from '../models/contribution.model';
 import { Event } from '../models/event.model';
 import { ProjectAnalytics } from '../models/project-analytics.model';
 import { ProjectPrediction } from '../models/project-prediction.model';
+import {
+  DashboardData,
+  DashboardMetrics,
+  FinancialSnapshot,
+  ProjectProgress,
+  ProjectRecommendation,
+  TopProject,
+  UrgentProject,
+  UserContribution
+} from '../models/dashboard.model';
 
 @Injectable({
   providedIn: 'root'
@@ -365,5 +375,360 @@ export class ProjectService {
         );
       })
     );
+  }
+
+  // Dashboard methods
+  getDashboardData(): Observable<DashboardData> {
+    console.log('Building dashboard data from existing endpoints...');
+
+    // Since there's no dedicated dashboard endpoint, we'll build the dashboard data
+    // by making multiple calls to existing endpoints and combining the results
+    return this.getAllProjects().pipe(
+      map(projects => {
+        console.log('Building dashboard data from projects:', projects);
+
+        if (!projects || projects.length === 0) {
+          throw new Error('No projects found');
+        }
+
+        // Calculate metrics
+        const totalProjects = projects.length;
+        const fundsRaised = projects.reduce((sum, project) => sum + project.current_amount, 0);
+        const activeProjects = projects.filter(p => p.days_remaining > 0).length;
+        const successfulProjects = projects.filter(p =>
+          (p.current_amount / p.goal_amount) >= 0.9 || p.current_amount >= p.goal_amount
+        ).length;
+        const successRate = (successfulProjects / totalProjects) * 100;
+
+        // Project progress
+        const projectProgress: ProjectProgress[] = projects.map(p => ({
+          projectId: p.id_project!,
+          projectName: p.name,
+          currentAmount: p.current_amount,
+          goalAmount: p.goal_amount,
+          progressPercentage: Math.round((p.current_amount / p.goal_amount) * 100)
+        }));
+
+        // Top projects by funds raised
+        const topProjects: TopProject[] = [...projects]
+          .sort((a, b) => b.current_amount - a.current_amount)
+          .slice(0, 3)
+          .map(p => ({
+            projectId: p.id_project!,
+            projectName: p.name,
+            fundsRaised: p.current_amount,
+            successProbability: Math.min(90, Math.round((p.current_amount / p.goal_amount) * 100)),
+            daysRemaining: p.days_remaining
+          }));
+
+        // Urgent projects
+        const urgentProjects: UrgentProject[] = projects
+          .filter(p => p.days_remaining < 30 && p.days_remaining > 0)
+          .map(p => ({
+            projectId: p.id_project!,
+            projectName: p.name,
+            daysRemaining: p.days_remaining,
+            currentAmount: p.current_amount,
+            goalAmount: p.goal_amount,
+            progressPercentage: Math.round((p.current_amount / p.goal_amount) * 100)
+          }));
+
+        // Financial snapshot
+        const totalExpenses = projects.reduce((sum, project) => sum + project.total_expenses, 0);
+        const netFunds = fundsRaised - totalExpenses;
+
+        // Group funds by category
+        const fundsByCategory = Object.values(Category).map(category => {
+          const projectsInCategory = projects.filter(p => p.category === category);
+          const amount = projectsInCategory.reduce((sum, p) => sum + p.current_amount, 0);
+          return { category, amount };
+        }).filter(c => c.amount > 0); // Only include categories with funds
+
+        // Recommendations (we'll use the top projects as recommendations for now)
+        const recommendations: ProjectRecommendation[] = [...projects]
+          .sort(() => 0.5 - Math.random())
+          .slice(0, 3)
+          .map(p => ({
+            projectId: p.id_project!,
+            projectName: p.name,
+            matchScore: Math.floor(Math.random() * 30) + 70, // 70-100%
+            category: p.category.toString(),
+            description: p.description.substring(0, 100) + '...',
+            imageUrl: p.image || '/assets/images/soccer-field-night.jpg'
+          }));
+
+        // User contributions (we don't have a way to get these from the existing endpoints)
+        // So we'll create some mock ones based on real projects
+        const userContributions: UserContribution[] = [
+          {
+            projectId: projects[0].id_project!,
+            projectName: projects[0].name,
+            amount: Math.round(projects[0].current_amount * 0.2), // 20% of the current amount
+            date: new Date(new Date().setDate(new Date().getDate() - 5))
+          }
+        ];
+
+        if (projects.length > 1) {
+          userContributions.push({
+            projectId: projects[1].id_project!,
+            projectName: projects[1].name,
+            amount: Math.round(projects[1].current_amount * 0.15), // 15% of the current amount
+            date: new Date(new Date().setDate(new Date().getDate() - 15))
+          });
+        }
+
+        // Build the complete dashboard data
+        const dashboardData: DashboardData = {
+          metrics: {
+            totalProjects,
+            fundsRaised,
+            successRate,
+            activeProjects
+          },
+          projectProgress,
+          topProjects,
+          urgentProjects,
+          financialSnapshot: {
+            totalFunds: fundsRaised,
+            totalExpenses,
+            netFunds,
+            fundsByCategory
+          },
+          recommendations,
+          userContributions
+        };
+
+        console.log('Built dashboard data:', dashboardData);
+        return dashboardData;
+      }),
+      catchError((error) => {
+        console.error('Error building dashboard data:', error);
+        console.warn('Using mock dashboard data instead');
+        return of(this.getMockDashboardData());
+      })
+    );
+  }
+
+  private getMockDashboardData(): DashboardData {
+    const mockProjects = this.getMockProjects();
+
+    // Calculate metrics
+    const totalProjects = mockProjects.length;
+    const fundsRaised = mockProjects.reduce((sum, project) => sum + project.current_amount, 0);
+    const activeProjects = mockProjects.filter(p => p.days_remaining > 0).length;
+    const successfulProjects = mockProjects.filter(p =>
+      (p.current_amount / p.goal_amount) >= 0.9 || p.current_amount >= p.goal_amount
+    ).length;
+    const successRate = (successfulProjects / totalProjects) * 100;
+
+    // Project progress
+    const projectProgress: ProjectProgress[] = mockProjects.map(p => ({
+      projectId: p.id_project!,
+      projectName: p.name,
+      currentAmount: p.current_amount,
+      goalAmount: p.goal_amount,
+      progressPercentage: Math.round((p.current_amount / p.goal_amount) * 100)
+    }));
+
+    // Top projects by funds raised
+    const topProjects: TopProject[] = [...mockProjects]
+      .sort((a, b) => b.current_amount - a.current_amount)
+      .slice(0, 3)
+      .map(p => ({
+        projectId: p.id_project!,
+        projectName: p.name,
+        fundsRaised: p.current_amount,
+        successProbability: Math.min(90, Math.round((p.current_amount / p.goal_amount) * 100)),
+        daysRemaining: p.days_remaining
+      }));
+
+    // Urgent projects
+    const urgentProjects: UrgentProject[] = mockProjects
+      .filter(p => p.days_remaining < 5 && p.days_remaining > 0)
+      .map(p => ({
+        projectId: p.id_project!,
+        projectName: p.name,
+        daysRemaining: p.days_remaining,
+        currentAmount: p.current_amount,
+        goalAmount: p.goal_amount,
+        progressPercentage: Math.round((p.current_amount / p.goal_amount) * 100)
+      }));
+
+    // If no urgent projects, add some mock ones
+    if (urgentProjects.length === 0) {
+      const mockUrgent = mockProjects.slice(0, 2).map(p => ({
+        projectId: p.id_project!,
+        projectName: p.name,
+        daysRemaining: Math.floor(Math.random() * 5) + 1,
+        currentAmount: p.current_amount,
+        goalAmount: p.goal_amount,
+        progressPercentage: Math.round((p.current_amount / p.goal_amount) * 100)
+      }));
+      urgentProjects.push(...mockUrgent);
+    }
+
+    // Financial snapshot
+    const totalExpenses = mockProjects.reduce((sum, project) => sum + project.total_expenses, 0);
+    const netFunds = fundsRaised - totalExpenses;
+
+    // Group funds by category
+    const fundsByCategory = Object.values(Category).map(category => {
+      const projectsInCategory = mockProjects.filter(p => p.category === category);
+      const amount = projectsInCategory.reduce((sum, p) => sum + p.current_amount, 0);
+      return { category, amount };
+    });
+
+    const financialSnapshot: FinancialSnapshot = {
+      totalFunds: fundsRaised,
+      totalExpenses,
+      netFunds,
+      fundsByCategory
+    };
+
+    // Recommendations
+    const recommendations: ProjectRecommendation[] = mockProjects
+      .sort(() => 0.5 - Math.random())
+      .slice(0, 3)
+      .map(p => ({
+        projectId: p.id_project!,
+        projectName: p.name,
+        matchScore: Math.floor(Math.random() * 30) + 70, // 70-100%
+        category: p.category.toString(),
+        description: p.description.substring(0, 100) + '...',
+        imageUrl: p.image || '/assets/images/soccer-field-night.jpg'
+      }));
+
+    // User contributions (mock data)
+    const userContributions: UserContribution[] = [
+      {
+        projectId: mockProjects[0].id_project!,
+        projectName: mockProjects[0].name,
+        amount: 500,
+        date: new Date(new Date().setDate(new Date().getDate() - 5))
+      },
+      {
+        projectId: mockProjects[1].id_project!,
+        projectName: mockProjects[1].name,
+        amount: 250,
+        date: new Date(new Date().setDate(new Date().getDate() - 15))
+      }
+    ];
+
+    return {
+      metrics: {
+        totalProjects,
+        fundsRaised,
+        successRate,
+        activeProjects
+      },
+      projectProgress,
+      topProjects,
+      urgentProjects,
+      financialSnapshot,
+      recommendations,
+      userContributions
+    };
+  }
+
+  // Get dashboard metrics
+  getDashboardMetrics(): Observable<DashboardMetrics> {
+    const dashboardUrl = 'http://localhost:8089/project/dashboard/metrics';
+    console.log('Calling API: GET', dashboardUrl);
+
+    return this.http.get<DashboardMetrics>(dashboardUrl)
+      .pipe(
+        tap(data => console.log('Received dashboard metrics:', data)),
+        catchError((error) => {
+          console.error('Backend connection failed:', error);
+          console.warn('Using mock metrics instead');
+          const mockData = this.getMockDashboardData();
+          return of(mockData.metrics);
+        })
+      );
+  }
+
+  // Get project progress data for charts
+  getProjectProgressData(): Observable<ProjectProgress[]> {
+    const dashboardUrl = 'http://localhost:8089/project/dashboard/project-progress';
+    console.log('Calling API: GET', dashboardUrl);
+
+    return this.http.get<ProjectProgress[]>(dashboardUrl)
+      .pipe(
+        tap(data => console.log('Received project progress data:', data)),
+        catchError((error) => {
+          console.error('Backend connection failed:', error);
+          console.warn('Using mock progress data instead');
+          const mockData = this.getMockDashboardData();
+          return of(mockData.projectProgress);
+        })
+      );
+  }
+
+  // Get financial snapshot
+  getFinancialSnapshot(): Observable<FinancialSnapshot> {
+    const dashboardUrl = 'http://localhost:8089/project/dashboard/financial-snapshot';
+    console.log('Calling API: GET', dashboardUrl);
+
+    return this.http.get<FinancialSnapshot>(dashboardUrl)
+      .pipe(
+        tap(data => console.log('Received financial snapshot:', data)),
+        catchError((error) => {
+          console.error('Backend connection failed:', error);
+          console.warn('Using mock financial data instead');
+          const mockData = this.getMockDashboardData();
+          return of(mockData.financialSnapshot);
+        })
+      );
+  }
+
+  // Get top projects
+  getTopProjects(): Observable<TopProject[]> {
+    const dashboardUrl = 'http://localhost:8089/project/dashboard/top-projects';
+    console.log('Calling API: GET', dashboardUrl);
+
+    return this.http.get<TopProject[]>(dashboardUrl)
+      .pipe(
+        tap(data => console.log('Received top projects:', data)),
+        catchError((error) => {
+          console.error('Backend connection failed:', error);
+          console.warn('Using mock top projects instead');
+          const mockData = this.getMockDashboardData();
+          return of(mockData.topProjects);
+        })
+      );
+  }
+
+  // Get urgent projects
+  getUrgentProjects(): Observable<UrgentProject[]> {
+    const dashboardUrl = 'http://localhost:8089/project/dashboard/urgent-projects';
+    console.log('Calling API: GET', dashboardUrl);
+
+    return this.http.get<UrgentProject[]>(dashboardUrl)
+      .pipe(
+        tap(data => console.log('Received urgent projects:', data)),
+        catchError((error) => {
+          console.error('Backend connection failed:', error);
+          console.warn('Using mock urgent projects instead');
+          const mockData = this.getMockDashboardData();
+          return of(mockData.urgentProjects);
+        })
+      );
+  }
+
+  // Get user contributions
+  getUserContributions(userId: string): Observable<UserContribution[]> {
+    const dashboardUrl = `http://localhost:8089/project/dashboard/user-contributions/${userId}`;
+    console.log('Calling API: GET', dashboardUrl);
+
+    return this.http.get<UserContribution[]>(dashboardUrl)
+      .pipe(
+        tap(data => console.log('Received user contributions:', data)),
+        catchError((error) => {
+          console.error('Backend connection failed:', error);
+          console.warn('Using mock user contributions instead');
+          const mockData = this.getMockDashboardData();
+          return of(mockData.userContributions);
+        })
+      );
   }
 }

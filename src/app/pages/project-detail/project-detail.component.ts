@@ -145,5 +145,25 @@ export class ProjectDetailComponent implements OnInit, OnDestroy {
     }
   }
 
+  deleteProject(): void {
+    if (!this.project?.id_project) return;
+
+    // Confirm before deleting
+    if (confirm(`Are you sure you want to delete the project "${this.project.name}"? This action cannot be undone.`)) {
+      this.loading = true;
+      this.projectService.deleteProject(this.project.id_project).subscribe({
+        next: () => {
+          console.log('Project deleted successfully');
+          this.router.navigate(['/projects']);
+        },
+        error: (err) => {
+          console.error('Error deleting project', err);
+          this.error = true;
+          this.errorMessage = 'Failed to delete project. Please try again later.';
+          this.loading = false;
+        }
+      });
+    }
+  }
 
 }

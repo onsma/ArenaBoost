@@ -1,0 +1,201 @@
+// Variables
+$primary-color: #273d4e;
+$accent-color: #c9b037;
+$sidebar-width: 250px;
+$sidebar-bg: white;
+$content-bg: #f8f9fa;
+$text-color: #333;
+$text-muted: #6c757d;
+$border-color: #e9ecef;
+
+// Dashboard Container
+.dashboard-container {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+}
+
+// Sidebar Styles
+.sidebar {
+  width: $sidebar-width;
+  background-color: $sidebar-bg;
+  border-right: 1px solid $border-color;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  height: 100vh;
+  z-index: 1000;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+}
+
+.logo-container {
+  padding: 20px;
+  text-align: center;
+  border-bottom: 1px solid $border-color;
+
+  .logo {
+    max-width: 80%;
+    height: auto;
+  }
+}
+
+.user-info {
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid $border-color;
+
+  .user-avatar {
+    margin-right: 10px;
+
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+  }
+
+  .user-details {
+    .user-name {
+      font-weight: 600;
+      color: $text-color;
+    }
+
+    .user-role {
+      font-size: 0.8rem;
+      color: $text-muted;
+    }
+  }
+}
+
+.navigation-header {
+  padding: 15px 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: $text-muted;
+}
+
+.sidebar-nav {
+  flex: 1;
+
+  .nav-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    .nav-item {
+      a {
+        display: flex;
+        align-items: center;
+        padding: 12px 20px;
+        color: $text-color;
+        text-decoration: none;
+        transition: all 0.3s ease;
+
+        i {
+          margin-right: 10px;
+          font-size: 1.2rem;
+        }
+
+        &:hover {
+          background-color: rgba($accent-color, 0.1);
+          color: $accent-color;
+        }
+      }
+
+      &.active {
+        a {
+          background-color: rgba($accent-color, 0.1);
+          color: $accent-color;
+          border-left: 3px solid $accent-color;
+        }
+      }
+    }
+  }
+}
+
+// Main Content Styles
+.main-content {
+  flex: 1;
+  margin-left: $sidebar-width;
+  background-color: $content-bg;
+  min-height: 100vh;
+}
+
+.top-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+  background-color: white;
+  border-bottom: 1px solid $border-color;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+
+  .search-container {
+    flex: 1;
+    max-width: 500px;
+
+    .search-input {
+      width: 100%;
+      padding: 8px 15px;
+      border: 1px solid $border-color;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      outline: none;
+
+      &:focus {
+        border-color: $accent-color;
+      }
+    }
+  }
+
+  // ArenaBoost Banner
+  .arenaboost-banner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 20px;
+
+    .logo-text {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: $primary-color;
+
+      .gold {
+        color: $accent-color;
+      }
+    }
+
+    .tagline {
+      font-size: 0.8rem;
+      color: $text-muted;
+      text-align: center;
+    }
+  }
+
+  .user-dropdown {
+    .dropdown-toggle {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+
+      .user-icon {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        margin-right: 10px;
+      }
+
+      i {
+        margin-left: 5px;
+        font-size: 0.8rem;
+      }
+    }
+  }
+}
+
+.content-area {
+  padding: 30px;
+}

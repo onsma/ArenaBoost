@@ -1,0 +1,493 @@
+<app-sidebar-layout>
+    <div class="container-fluid py-4">
+        <!-- Loading State -->
+        <div *ngIf="loading" class="text-center py-5">
+            <div class="spinner-border text-warning" role="status" style="width: 3rem; height: 3rem;">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-3 text-muted">Loading dashboard data...</p>
+        </div>
+
+        <!-- Error State -->
+        <div *ngIf="error" class="alert alert-danger mx-3">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            <span>{{ errorMessage }}</span>
+            <button (click)="loadDashboardData()" class="btn btn-outline-danger ms-3">
+                <i class="bi bi-arrow-clockwise me-1"></i>Try Again
+            </button>
+        </div>
+
+        <!-- Dashboard Content -->
+        <div *ngIf="!loading && !error && dashboardData">
+            <!-- Dashboard Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4 px-3">
+                <div>
+
+                    <div class="mt-2">
+                        <span *ngIf="backendConnected" class="badge bg-success">
+                            <i class="bi bi-check-circle me-1"></i>Connected to backend
+                        </span>
+
+                    </div>
+                </div>
+                <div class="d-flex">
+                    <button (click)="loadDashboardData()" class="btn btn-outline-primary me-2"
+                        title="Refresh dashboard data">
+                        <i class="bi bi-arrow-clockwise me-1"></i>Refresh
+                    </button>
+                    <button (click)="navigateToCreateProject()" class="btn btn-warning">
+                        <i class="bi bi-plus-circle me-1"></i>Create Project
+                    </button>
+                </div>
+            </div>
+
+            <!-- Project Overview Metrics -->
+            <div class="row g-4 mb-4 px-2">
+                <!-- Total Projects -->
+                <div class="col-md-3">
+                    <div class="card border-0 shadow h-100">
+                        <div class="card-body p-4">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div class="text-muted">Total Projects</div>
+                                <div class="bg-light rounded-circle p-2">
+                                    <i class="bi bi-folder2-open text-primary fs-4"></i>
+                                </div>
+                            </div>
+                            <h2 class="display-6 fw-bold mb-0">{{ dashboardData.metrics.totalProjects }}</h2>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Funds Raised -->
+                <div class="col-md-3">
+                    <div class="card border-0 shadow h-100">
+                        <div class="card-body p-4">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div class="text-muted">Funds Raised</div>
+                                <div class="bg-light rounded-circle p-2">
+                                    <i class="bi bi-cash-stack text-success fs-4"></i>
+                                </div>
+                            </div>
+                            <h2 class="display-6 fw-bold mb-0">{{ formatCurrency(dashboardData.metrics.fundsRaised) }}
+                            </h2>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Success Rate -->
+                <div class="col-md-3">
+                    <div class="card border-0 shadow h-100">
+                        <div class="card-body p-4">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div class="text-muted">Success Rate</div>
+                                <div class="bg-light rounded-circle p-2">
+                                    <i class="bi bi-graph-up-arrow text-warning fs-4"></i>
+                                </div>
+                            </div>
+                            <h2 class="display-6 fw-bold mb-0">{{ dashboardData.metrics.successRate.toFixed(1) }}%</h2>
+                            <div class="progress mt-2" style="height: 6px;">
+                                <div class="progress-bar"
+                                    [ngClass]="getSuccessRateClass(dashboardData.metrics.successRate)"
+                                    [style.width.%]="dashboardData.metrics.successRate"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Active Projects -->
+                <div class="col-md-3">
+                    <div class="card border-0 shadow h-100">
+                        <div class="card-body p-4">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div class="text-muted">Active Projects</div>
+                                <div class="bg-light rounded-circle p-2">
+                                    <i class="bi bi-lightning-charge text-danger fs-4"></i>
+                                </div>
+                            </div>
+                            <h2 class="display-6 fw-bold mb-0">{{ dashboardData.metrics.activeProjects }}</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mb-4">
+                <!-- Project Progress -->
+                <div class="col-md-8">
+                    <div class="card border-0 shadow h-100">
+                        <div class="card-header bg-white border-0 py-3">
+                            <h5 class="card-title mb-0">Project Funding Progress</h5>
+                        </div>
+                        <div class="card-body">
+                            <div *ngFor="let project of dashboardData.projectProgress.slice(0, 5)" class="mb-3">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <span>{{ project.projectName }}</span>
+                                    <span>{{ project.progressPercentage }}%</span>
+                                </div>
+                                <div class="progress" style="height: 10px;">
+                                    <div class="progress-bar"
+                                        [ngClass]="getProgressBarClass(project.progressPercentage)"
+                                        [style.width.%]="project.progressPercentage"></div>
+                                </div>
+                                <div class="d-flex justify-content-between mt-1">
+                                    <small class="text-muted">{{ formatCurrency(project.currentAmount) }}</small>
+                                    <small class="text-muted">{{ formatCurrency(project.goalAmount) }}</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Top Projects -->
+                <div class="col-md-4">
+                    <div class="card border-0 shadow h-100">
+                        <div class="card-header bg-white border-0 py-3">
+                            <h5 class="card-title mb-0">Top Projects</h5>
+                        </div>
+                        <div class="card-body p-0">
+                            <ul class="list-group list-group-flush">
+                                <li *ngFor="let project of dashboardData.topProjects" class="list-group-item p-3">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1">{{ project.projectName }}</h6>
+                                            <div class="text-muted small">{{ formatCurrency(project.fundsRaised) }}
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <span class="badge bg-success rounded-pill">{{ project.successProbability
+                                                }}%</span>
+                                        </div>
+                                    </div>
+                                    <div class="progress mt-2" style="height: 5px;">
+                                        <div class="progress-bar bg-warning"
+                                            [style.width.%]="project.successProbability">
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mb-4">
+                <!-- Financial Snapshot -->
+                <div class="col-md-6">
+                    <div class="card border-0 shadow h-100">
+                        <div class="card-header bg-white border-0 py-3">
+                            <h5 class="card-title mb-0">Financial Snapshot</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row text-center mb-4">
+                                <div class="col-md-4">
+                                    <div class="mb-2">Total Funds</div>
+                                    <h5 class="text-success mb-0">{{
+                                        formatCurrency(dashboardData.financialSnapshot.totalFunds) }}</h5>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-2">Total Expenses</div>
+                                    <h5 class="text-danger mb-0">{{
+                                        formatCurrency(dashboardData.financialSnapshot.totalExpenses) }}</h5>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-2">Net Funds</div>
+                                    <h5 class="text-primary mb-0">{{
+                                        formatCurrency(dashboardData.financialSnapshot.netFunds) }}</h5>
+                                </div>
+                            </div>
+
+                            <!-- Project Financial Evolution -->
+                            <div class="mb-4">
+                                <h6 class="mb-3">Project Financial Evolution</h6>
+                                <div class="project-evolution-chart">
+                                    <div *ngFor="let project of getTopProjectsForEvolution(); let i = index"
+                                        class="project-evolution-item">
+                                        <div class="project-evolution-header">
+                                            <span class="project-name">{{ project.projectName }}</span>
+                                            <span class="project-amount">{{ formatCurrency(project.fundsRaised)
+                                                }}</span>
+                                        </div>
+                                        <div class="project-evolution-graph">
+                                            <div class="evolution-bar-container">
+                                                <div *ngFor="let month of getMonths(); let j = index"
+                                                    class="evolution-bar"
+                                                    [style.height.px]="getProjectEvolutionHeight(i, j)"
+                                                    [style.background-color]="getProjectColor(i)">
+                                                    <div class="evolution-tooltip">
+                                                        {{ month }}: {{ formatCurrency(getProjectEvolutionValue(i, j))
+                                                        }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="project-evolution-trend" [class.positive]="getProjectTrend(i) > 0"
+                                            [class.negative]="getProjectTrend(i) < 0">
+                                            <i class="bi" [class.bi-arrow-up]="getProjectTrend(i) > 0"
+                                                [class.bi-arrow-down]="getProjectTrend(i) < 0"></i>
+                                            {{ Math.abs(getProjectTrend(i)) }}%
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Simple Financial Chart -->
+                            <div class="mb-4 simple-chart">
+                                <div class="simple-donut-chart">
+                                    <div class="donut-hole">
+                                        <div class="donut-value">{{ getFinancialPercentage() }}%</div>
+                                        <div class="donut-label">Available</div>
+                                    </div>
+                                </div>
+                                <div class="chart-legend">
+                                    <div class="legend-item">
+                                        <div class="legend-color" style="background-color: #28a745;"></div>
+                                        <div class="legend-text">Available Funds</div>
+                                    </div>
+                                    <div class="legend-item">
+                                        <div class="legend-color" style="background-color: #dc3545;"></div>
+                                        <div class="legend-text">Expenses</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <h6 class="mb-3">Funds by Category</h6>
+                            <div *ngFor="let category of dashboardData.financialSnapshot.fundsByCategory" class="mb-2">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <span>{{ formatCategoryName(category.category) }}</span>
+                                    <span>{{ formatCurrency(category.amount) }}</span>
+                                </div>
+                                <div class="progress" style="height: 8px;">
+                                    <div class="progress-bar bg-info"
+                                        [style.width.%]="getCategoryPercentage(category.amount, dashboardData.financialSnapshot.totalFunds)">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Urgent Projects -->
+                <div class="col-md-6">
+                    <div class="card border-0 shadow h-100">
+                        <div
+                            class="card-header bg-white border-0 py-3 d-flex justify-content-between align-items-center">
+                            <h5 class="card-title mb-0">Urgent Projects</h5>
+                            <span class="badge bg-danger">Ending Soon</span>
+                        </div>
+                        <div class="card-body p-0">
+                            <ul class="list-group list-group-flush">
+                                <li *ngFor="let project of dashboardData.urgentProjects" class="list-group-item p-3">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1">{{ project.projectName }}</h6>
+                                            <div class="progress mt-2 mb-2" style="height: 5px; width: 150px;">
+                                                <div class="progress-bar"
+                                                    [ngClass]="getProgressBarClass(project.progressPercentage)"
+                                                    [style.width.%]="project.progressPercentage"></div>
+                                            </div>
+                                            <div class="text-muted small">
+                                                {{ formatCurrency(project.currentAmount) }} of {{
+                                                formatCurrency(project.goalAmount) }}
+                                            </div>
+                                        </div>
+                                        <div class="text-center">
+                                            <div class="fw-bold"
+                                                [ngClass]="getDaysRemainingClass(project.daysRemaining)">
+                                                {{ project.daysRemaining }}
+                                            </div>
+                                            <div class="small text-muted">days left</div>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="card-footer bg-white border-0 text-center py-3">
+                            <button class="btn btn-sm btn-outline-primary" routerLink="/projects">View All
+                                Projects</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Project Performance Charts Row -->
+            <div class="row mb-4">
+                <!-- Line Chart for Funding Trends -->
+                <div class="col-md-6">
+                    <div class="card border-0 shadow h-100">
+                        <div class="card-header bg-white border-0 py-3">
+                            <h5 class="card-title mb-0">Funding Trends</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="simple-line-chart">
+                                <div class="chart-bars">
+                                    <div *ngFor="let month of getMonths(); let i = index" class="chart-bar-container">
+                                        <div class="chart-bar-label">{{month}}</div>
+                                        <div class="chart-bar-wrapper">
+                                            <div class="chart-bar funds-bar" [style.height.%]="getFundsBarHeight(i)">
+                                            </div>
+                                            <div class="chart-bar expenses-bar"
+                                                [style.height.%]="getExpensesBarHeight(i)">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="chart-legend">
+                                    <div class="legend-item">
+                                        <div class="legend-color" style="background-color: #28a745;"></div>
+                                        <div class="legend-text">Funds Raised</div>
+                                    </div>
+                                    <div class="legend-item">
+                                        <div class="legend-color" style="background-color: #dc3545;"></div>
+                                        <div class="legend-text">Expenses</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Radar Chart for Project Performance -->
+                <div class="col-md-6">
+                    <div class="card border-0 shadow h-100">
+                        <div class="card-header bg-white border-0 py-3">
+                            <h5 class="card-title mb-0">Project Performance Metrics</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="simple-radar-chart">
+                                <div class="radar-metrics">
+                                    <div class="radar-metric">
+                                        <div class="metric-label">Funding</div>
+                                        <div class="metric-bar">
+                                            <div class="metric-fill" [style.width.%]="85"></div>
+                                        </div>
+                                        <div class="metric-value">85%</div>
+                                    </div>
+                                    <div class="radar-metric">
+                                        <div class="metric-label">Timeline</div>
+                                        <div class="metric-bar">
+                                            <div class="metric-fill" [style.width.%]="70"></div>
+                                        </div>
+                                        <div class="metric-value">70%</div>
+                                    </div>
+                                    <div class="radar-metric">
+                                        <div class="metric-label">Engagement</div>
+                                        <div class="metric-bar">
+                                            <div class="metric-fill" [style.width.%]="90"></div>
+                                        </div>
+                                        <div class="metric-value">90%</div>
+                                    </div>
+                                    <div class="radar-metric">
+                                        <div class="metric-label">Risk</div>
+                                        <div class="metric-bar">
+                                            <div class="metric-fill" [style.width.%]="65"></div>
+                                        </div>
+                                        <div class="metric-value">65%</div>
+                                    </div>
+                                    <div class="radar-metric">
+                                        <div class="metric-label">Innovation</div>
+                                        <div class="metric-bar">
+                                            <div class="metric-fill" [style.width.%]="80"></div>
+                                        </div>
+                                        <div class="metric-value">80%</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <!-- Recommendations -->
+                <div class="col-md-8">
+                    <div class="card border-0 shadow mb-4">
+                        <div class="card-header bg-white border-0 py-3">
+                            <h5 class="card-title mb-0">Recommended Projects</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div *ngFor="let rec of dashboardData.recommendations" class="col-md-4 mb-3">
+                                    <div class="card h-100">
+                                        <img [src]="rec.imageUrl" class="card-img-top" alt="Project Image"
+                                            style="height: 150px; object-fit: cover;">
+                                        <div class="card-body">
+                                            <h6 class="card-title">{{ rec.projectName }}</h6>
+                                            <p class="card-text small text-muted">{{ rec.description }}</p>
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <span class="badge bg-light text-dark">{{ rec.matchScore }}%
+                                                    match</span>
+                                                <button class="btn btn-sm btn-outline-primary"
+                                                    (click)="navigateToProject(rec.projectId)">View</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- User Contributions and Category Distribution -->
+                <div class="col-md-4">
+                    <!-- User Contributions -->
+                    <div class="card border-0 shadow mb-4">
+                        <div class="card-header bg-white border-0 py-3">
+                            <h5 class="card-title mb-0">My Contributions</h5>
+                        </div>
+                        <div class="card-body p-0">
+                            <ul class="list-group list-group-flush">
+                                <li *ngFor="let contrib of dashboardData.userContributions" class="list-group-item p-3">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1">{{ contrib.projectName }}</h6>
+                                            <div class="text-muted small">{{ contrib.date | date:'mediumDate' }}</div>
+                                        </div>
+                                        <div>
+                                            <span class="badge bg-success">{{ formatCurrency(contrib.amount) }}</span>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Polar Chart for Category Distribution -->
+                    <div class="card border-0 shadow mb-4">
+                        <div class="card-header bg-white border-0 py-3">
+                            <h5 class="card-title mb-0">Project Categories</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="simple-category-chart">
+                                <div class="category-bars">
+                                    <div class="category-bar">
+                                        <div class="category-label">Tournament</div>
+                                        <div class="category-value-bar" style="width: 85%;">
+                                            <span class="category-value">85%</span>
+                                        </div>
+                                    </div>
+                                    <div class="category-bar">
+                                        <div class="category-label">Equipment</div>
+                                        <div class="category-value-bar" style="width: 65%;">
+                                            <span class="category-value">65%</span>
+                                        </div>
+                                    </div>
+                                    <div class="category-bar">
+                                        <div class="category-label">Training</div>
+                                        <div class="category-value-bar" style="width: 45%;">
+                                            <span class="category-value">45%</span>
+                                        </div>
+                                    </div>
+                                    <div class="category-bar">
+                                        <div class="category-label">Other</div>
+                                        <div class="category-value-bar" style="width: 25%;">
+                                            <span class="category-value">25%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</app-sidebar-layout>

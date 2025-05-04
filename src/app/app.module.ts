@@ -2,6 +2,8 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -15,6 +17,10 @@ import { ProjectFormComponent } from './pages/project-form/project-form.componen
 import { ContributionFormComponent } from './pages/contribution-form/contribution-form.component';
 import { AuthComponent } from './pages/auth/auth.component';
 import { HowItWorksComponent } from './pages/how-it-works/how-it-works.component';
+import { DashboardComponent } from './pages/dashboard/dashboard.component';
+import { DashboardTestComponent } from './pages/dashboard/dashboard-test.component';
+import { SidebarLayoutComponent } from './components/sidebar-layout/sidebar-layout.component';
+import { LoansComponent } from './pages/loans/loans.component';
 
 @NgModule({
   declarations: [
@@ -28,16 +34,23 @@ import { HowItWorksComponent } from './pages/how-it-works/how-it-works.component
     ProjectFormComponent,
     ContributionFormComponent,
     AuthComponent,
-    HowItWorksComponent
+    HowItWorksComponent,
+    DashboardComponent,
+    DashboardTestComponent,
+    SidebarLayoutComponent,
+    LoansComponent
   ],
   imports: [
     BrowserModule,
+    CommonModule,
     AppRoutingModule,
     HttpClientModule,
     FormsModule,
     ReactiveFormsModule
   ],
-  providers: [],
+  providers: [
+    provideCharts(withDefaultRegisterables())
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

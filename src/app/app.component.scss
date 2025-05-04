@@ -1,0 +1,11 @@
+main {
+  min-height: calc(100vh - 160px); // Adjust based on header and footer height
+  display: flex;
+  flex-direction: column;
+}
+
+.full-height {
+  min-height: 100vh;
+  padding: 0;
+  margin: 0;
+}

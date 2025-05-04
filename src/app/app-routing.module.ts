@@ -10,9 +10,14 @@ import { ProjectFormComponent } from './pages/project-form/project-form.componen
 import { ContributionFormComponent } from './pages/contribution-form/contribution-form.component';
 import { AuthComponent } from './pages/auth/auth.component';
 import { HowItWorksComponent } from './pages/how-it-works/how-it-works.component';
+import { DashboardComponent } from './pages/dashboard/dashboard.component';
+import { DashboardTestComponent } from './pages/dashboard/dashboard-test.component';
+import { LoansComponent } from './pages/loans/loans.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
+  { path: 'dashboard', component: DashboardComponent },
+  { path: 'dashboard-test', component: DashboardTestComponent },
   { path: 'services', component: ServicesComponent },
   { path: 'projects', component: ProjectsComponent },
   { path: 'projects/create', component: ProjectFormComponent },
@@ -21,6 +26,7 @@ const routes: Routes = [
   { path: 'projects/:id/contribute', component: ContributionFormComponent },
   { path: 'how-it-works', component: HowItWorksComponent },
   { path: 'auth', component: AuthComponent },
+  { path: 'loans', component: LoansComponent },
   { path: '**', redirectTo: '' } // Redirect to home for any unknown routes
 ];
 
