@@ -21,6 +21,8 @@ import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { DashboardTestComponent } from './pages/dashboard/dashboard-test.component';
 import { SidebarLayoutComponent } from './components/sidebar-layout/sidebar-layout.component';
 import { LoansComponent } from './pages/loans/loans.component';
+import { ImageUploadComponent } from './components/image-upload/image-upload.component';
+import { ImageTestComponent } from './components/image-test/image-test.component';
 
 @NgModule({
   declarations: [
@@ -38,7 +40,9 @@ import { LoansComponent } from './pages/loans/loans.component';
     DashboardComponent,
     DashboardTestComponent,
     SidebarLayoutComponent,
-    LoansComponent
+    LoansComponent,
+    ImageUploadComponent,
+    ImageTestComponent
   ],
   imports: [
     BrowserModule,

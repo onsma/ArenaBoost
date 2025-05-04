@@ -46,7 +46,8 @@ export interface ProjectRecommendation {
   matchScore: number;
   category: string;
   description: string;
-  imageUrl: string;
+  imageUrl?: string;
+  image?: string | null;
 }
 
 export interface UserContribution {

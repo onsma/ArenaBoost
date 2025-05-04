@@ -169,7 +169,8 @@ export class DashboardService {
       matchScore: Math.floor(Math.random() * 30) + 70, // Random match score between 70-100%
       category: p.category || 'Other',
       description: p.description || 'No description available',
-      imageUrl: p.image || '/assets/images/soccer-field-night.jpg'
+      image: p.image || null,
+      imageUrl: p.image || 'assets/images/projects/football-tournaament.jpg'
     }));
 
     // Generate user contributions based on real projects
@@ -275,7 +276,8 @@ export class DashboardService {
       matchScore: Math.floor(Math.random() * 30) + 70, // Random match score between 70-100%
       category: p.category || 'Other',
       description: p.description || 'No description available',
-      imageUrl: p.image || '/assets/images/soccer-field-night.jpg'
+      image: p.image || null,
+      imageUrl: p.image || 'assets/images/projects/football-tournaament.jpg'
     }));
 
     // Generate mock user contributions (in a real app, this would come from the backend)

@@ -13,6 +13,7 @@ import { HowItWorksComponent } from './pages/how-it-works/how-it-works.component
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { DashboardTestComponent } from './pages/dashboard/dashboard-test.component';
 import { LoansComponent } from './pages/loans/loans.component';
+import { ImageTestComponent } from './components/image-test/image-test.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -27,6 +28,7 @@ const routes: Routes = [
   { path: 'how-it-works', component: HowItWorksComponent },
   { path: 'auth', component: AuthComponent },
   { path: 'loans', component: LoansComponent },
+  { path: 'image-test', component: ImageTestComponent },
   { path: '**', redirectTo: '' } // Redirect to home for any unknown routes
 ];
 

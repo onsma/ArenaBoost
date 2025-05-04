@@ -29,8 +29,8 @@ $border-color: #e9ecef;
 }
 
 .btn-warning:hover {
-  background-color: darken(#c9b037, 10%);
-  border-color: darken(#c9b037, 10%);
+  background-color: #a89230; /* Darker version of accent color */
+  border-color: #a89230;
 }
 
 .card {
@@ -40,6 +40,30 @@ $border-color: #e9ecef;
 .card:hover {
   transform: translateY(-5px);
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+}
+
+// Project Card Styles - Similar to the car listing example
+.project-card {
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.project-card .card-img-top {
+  transition: transform 0.5s ease;
+}
+
+.project-card:hover .card-img-top {
+  transform: scale(1.05);
+}
+
+.project-card .card-title {
+  font-size: 1.25rem;
+  color: var(--primary-color);
+}
+
+.match-score {
+  font-size: 0.9rem;
+  color: #6c757d;
 }
 
 .progress {

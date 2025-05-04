@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProjectService } from '../../services/project.service';
+import { ImageService, ProjectImage } from '../../services/image.service';
 import { Project, Category } from '../../models/project.model';
 
 @Component({
@@ -18,14 +19,20 @@ export class ProjectFormComponent implements OnInit {
   error = false;
   errorMessage = '';
   categories = Object.values(Category);
+  availableImages: ProjectImage[] = [];
+  imageCategories: string[] = [];
+  selectedImageCategory: string = '';
+  showImageUpload = false;
 
   constructor(
     private fb: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
-    private projectService: ProjectService
+    private projectService: ProjectService,
+    private imageService: ImageService
   ) {
     this.projectForm = this.createForm();
+    this.loadImageData();
   }
 
   ngOnInit(): void {
@@ -39,6 +46,19 @@ export class ProjectFormComponent implements OnInit {
     });
   }
 
+  /**
+   * Load image data from the image service
+   */
+  loadImageData(): void {
+    this.availableImages = this.imageService.getAvailableImages();
+    this.imageCategories = this.imageService.getImageCategories();
+
+    // Set default category if available
+    if (this.imageCategories.length > 0) {
+      this.selectedImageCategory = this.imageCategories[0];
+    }
+  }
+
   createForm(): FormGroup {
     return this.fb.group({
       name: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(100)]],
@@ -46,7 +66,7 @@ export class ProjectFormComponent implements OnInit {
       category: [Category.Tournament, Validators.required],
       goal_amount: [0, [Validators.required, Validators.min(1000)]],
       duration_days: [30, [Validators.required, Validators.min(1), Validators.max(365)]],
-      image: ['']
+      image: ['', [Validators.required]]
     });
   }
 
@@ -134,5 +154,47 @@ export class ProjectFormComponent implements OnInit {
   hasError(controlName: string, errorName: string): boolean {
     const control = this.projectForm.get(controlName);
     return !!(control && control.hasError(errorName) && (control.dirty || control.touched || this.submitted));
+  }
+
+  /**
+   * Handle image selection from the image upload component
+   */
+  onImageSelected(imagePath: string): void {
+    // Update the form with the new image path
+    this.projectForm.patchValue({
+      image: imagePath
+    });
+
+    // Refresh the available images list
+    this.loadImageData();
+
+    // Hide the upload component
+    this.showImageUpload = false;
+  }
+
+  /**
+   * Filter images by category
+   */
+  filterImagesByCategory(category: string): void {
+    this.selectedImageCategory = category;
+  }
+
+  /**
+   * Get images for the currently selected category
+   */
+  getFilteredImages(): ProjectImage[] {
+    if (!this.selectedImageCategory) {
+      return this.availableImages;
+    }
+    return this.imageService.getImagesByCategory(this.selectedImageCategory);
+  }
+
+  /**
+   * Select an image for the project
+   */
+  selectImage(image: ProjectImage): void {
+    this.projectForm.patchValue({
+      image: image.path
+    });
   }
 }

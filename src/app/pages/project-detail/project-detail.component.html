@@ -89,8 +89,11 @@
         <div class="container-fluid p-0">
             <div class="row g-0">
                 <div class="col-12">
-                    <img [src]="project.image || project.imageUrl || '/assets/images/soccer-field-night.jpg'"
+                    <img [src]="project.image || project.imageUrl || 'https://img.freepik.com/free-photo/soccer-field-with-green-grass-night_587448-4105.jpg'"
                         [alt]="project.name" class="img-fluid w-100" style="max-height: 500px; object-fit: cover;">
+                    <div class="position-absolute bottom-0 end-0 p-3 bg-dark bg-opacity-75 text-white">
+                        <small><i class="bi bi-image me-1"></i> Project Image</small>
+                    </div>
                 </div>
             </div>
         </div>

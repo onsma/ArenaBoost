@@ -23,6 +23,7 @@ import {
 })
 export class ProjectService {
   private apiUrl = 'http://localhost:8089/project/project';
+  private defaultProjectImage = 'assets/images/projects/football-tournaament.jpg';
 
   constructor(private http: HttpClient) { }
 
@@ -32,11 +33,22 @@ export class ProjectService {
     return this.http.get<Project[]>(`${this.apiUrl}/retrieve-all-projects`)
       .pipe(
         tap(projects => console.log('Received projects:', projects)),
+        map(projects => this.ensureProjectImages(projects)),
         catchError((error) => {
           console.warn('Backend connection failed, using mock data instead', error);
           return of(this.getMockProjects());
         })
       );
+  }
+
+  // Helper method to ensure all projects have images
+  private ensureProjectImages(projects: Project[]): Project[] {
+    return projects.map(project => {
+      if (!project.image && !project.imageUrl) {
+        return { ...project, image: this.defaultProjectImage };
+      }
+      return project;
+    });
   }
 
   // Mock data for development when backend is not available
@@ -53,7 +65,7 @@ export class ProjectService {
         days_remaining: 120,
         start_date: new Date('2023-10-01'),
         category: Category.Tournament,
-        image: '/assets/images/soccer-field-night.jpg'
+        image: 'https://img.freepik.com/free-photo/soccer-field-with-green-grass-night_587448-4105.jpg'
       },
       {
         id_project: 2,
@@ -66,7 +78,7 @@ export class ProjectService {
         days_remaining: 45,
         start_date: new Date('2023-11-15'),
         category: Category.Tournament,
-        image: '/assets/images/LOGO.png'
+        image: 'https://img.freepik.com/free-photo/sports-tools_53876-138077.jpg'
       },
       {
         id_project: 3,
@@ -79,7 +91,7 @@ export class ProjectService {
         days_remaining: 300,
         start_date: new Date('2023-08-01'),
         category: Category.Equipement,
-        image: '/assets/images/pexels-szafran-16627321.jpg'
+        image: 'https://img.freepik.com/free-photo/swimming-pool-beach-luxury-hotel-outdoor-pools-spa-amara-dolce-vita-luxury-hotel-resort-tekirova-kemer-turkey_146671-18751.jpg'
       },
       {
         id_project: 4,
@@ -92,7 +104,7 @@ export class ProjectService {
         days_remaining: 90,
         start_date: new Date('2023-12-01'),
         category: Category.Formation,
-        image: '/assets/images/rocket-icon.png'
+        image: 'https://img.freepik.com/free-photo/coach-explaining-game-strategy-his-team_23-2149758138.jpg'
       }
     ];
   }
@@ -100,6 +112,13 @@ export class ProjectService {
   getProjectById(id: number): Observable<Project> {
     return this.http.get<Project>(`${this.apiUrl}/retrieve-project/${id}`)
       .pipe(
+        map(project => {
+          // Ensure project has an image
+          if (!project.image && !project.imageUrl) {
+            project.image = this.defaultProjectImage;
+          }
+          return project;
+        }),
         catchError((error) => {
           console.warn('Backend connection failed, using mock data instead', error);
           const mockProject = this.getMockProjects().find(p => p.id_project === id);
@@ -109,6 +128,11 @@ export class ProjectService {
   }
 
   createProject(project: Project): Observable<Project> {
+    // Ensure project has an image
+    if (!project.image) {
+      project.image = this.defaultProjectImage;
+    }
+
     return this.http.post<Project>(`${this.apiUrl}/add-project`, project)
       .pipe(
         catchError((error) => {
@@ -123,6 +147,11 @@ export class ProjectService {
   }
 
   updateProject(project: Project): Observable<Project> {
+    // Ensure project has an image
+    if (!project.image) {
+      project.image = this.defaultProjectImage;
+    }
+
     return this.http.put<Project>(`${this.apiUrl}/modify-project`, project)
       .pipe(
         catchError((error) => {
@@ -454,7 +483,8 @@ export class ProjectService {
             matchScore: Math.floor(Math.random() * 30) + 70, // 70-100%
             category: p.category.toString(),
             description: p.description.substring(0, 100) + '...',
-            imageUrl: p.image || '/assets/images/soccer-field-night.jpg'
+            image: p.image || null,
+            imageUrl: p.image || 'https://img.freepik.com/free-photo/soccer-field-with-green-grass-night_587448-4105.jpg'
           }));
 
         // User contributions (we don't have a way to get these from the existing endpoints)
@@ -595,7 +625,8 @@ export class ProjectService {
         matchScore: Math.floor(Math.random() * 30) + 70, // 70-100%
         category: p.category.toString(),
         description: p.description.substring(0, 100) + '...',
-        imageUrl: p.image || '/assets/images/soccer-field-night.jpg'
+        image: p.image || null,
+        imageUrl: p.image || 'https://img.freepik.com/free-photo/soccer-field-with-green-grass-night_587448-4105.jpg'
       }));
 
     // User contributions (mock data)
