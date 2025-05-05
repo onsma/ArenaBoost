@@ -41,7 +41,7 @@ public class RecommendationService {
 
         // Préparer les données pour Weka (exemple simplifié avec J48 pour la classification)
         List<Attribute> attributes = new ArrayList<>();
-        attributes.add(new Attribute("category", List.of("Equipment", "Tournament", "Other")));
+        attributes.add(new Attribute("category", List.of("Equipement", "Tournament", "Other")));
         attributes.add(new Attribute("goal_amount"));
         attributes.add(new Attribute("current_amount"));
         attributes.add(new Attribute("days_remaining"));

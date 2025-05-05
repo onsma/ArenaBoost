@@ -31,6 +31,7 @@ import weka.core.Attribute;
 import weka.core.DenseInstance;
 import weka.core.Instance;
 import weka.core.Instances;
+import com.example.project.projectbackend.service.ResourceNotFoundException;
 
 import java.io.ByteArrayOutputStream;
 import java.time.LocalDateTime;
@@ -45,6 +46,10 @@ public class ProjectServiceImpl implements IProjectService {
     private final ContributionRepository contributionRepository;
     private final EventRepository eventRepository;
     private final EmailServiceProject emailService;
+    @Override
+    public List<Project> findProjectsWithImages() {
+        return projectRepository.findProjectsWithImages();
+    }
 
     @Override
     public List<Project> retrieveAllProjects() {
@@ -140,6 +145,11 @@ public class ProjectServiceImpl implements IProjectService {
     @Override
     public List<Project> searchProjectsByName(String name) {
         return projectRepository.findByNameContainingIgnoreCase(name);
+    }
+
+    @Override
+    public Project updateProjectImage(int idProject, String image) {
+        return null;
     }
 
     @Override
@@ -335,5 +345,14 @@ public class ProjectServiceImpl implements IProjectService {
             e.printStackTrace();
             return null;
         }
+    }
+
+    // In ProjectService.java
+    public Project updateProjectImage(Integer projectId, String imagePath) {
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new ResourceNotFoundException("Project not found with id: " + projectId));
+
+        project.setImage(imagePath);
+        return projectRepository.save(project);
     }
 }

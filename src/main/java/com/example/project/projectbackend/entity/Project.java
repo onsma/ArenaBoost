@@ -22,6 +22,7 @@ public class Project {
     private float goal_amount;
     private float current_amount;
     private float total_expenses;
+    private String image;
     private int duration_days; // Nombre total de jours prévus pour le projet
     private int days_remaining; // Jours restants, mis à jour automatiquement
     private LocalDateTime start_date; // Date de début pour calculer dynamiquement

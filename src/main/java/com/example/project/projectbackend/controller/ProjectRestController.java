@@ -12,9 +12,13 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+
 import java.util.List;
 
 @RestController
+
+@CrossOrigin(origins = {"http://localhost:4200", "http://localhost:4201"})
+
 @RequestMapping("/project")
 public class ProjectRestController {
 
@@ -107,10 +111,27 @@ public class ProjectRestController {
     public ProjectPrediction predictProjectOutcome(@PathVariable("project-id") Integer projectId) {
         return projectService.predictProjectOutcome(projectId);
     }
+
     @GetMapping("/{supporter-name}/recommendations")
     public ResponseEntity<List<Project>> getRecommendations(@PathVariable("supporter-name") String supporterName) {
         List<Project> recommendations = recommendationService.recommendProjects(supporterName);
         return ResponseEntity.ok(recommendations);
+    }
+
+    // In ProjectController.java
+    @PutMapping("/project/{id}/image")
+    public ResponseEntity<Project> updateProjectImage(
+            @PathVariable int id,
+            @RequestParam String image) {
+
+        Project updatedProject = projectService.updateProjectImage(id, image);
+        return ResponseEntity.ok(updatedProject);
+    }
+
+    @GetMapping("/projects/with-images")
+    public ResponseEntity<List<Project>> getProjectsWithImages() {
+        List<Project> projects = projectService.findProjectsWithImages();
+        return ResponseEntity.ok(projects);
     }
 
 

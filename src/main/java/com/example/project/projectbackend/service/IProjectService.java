@@ -25,4 +25,8 @@ public interface IProjectService {
     ProjectPrediction predictProjectOutcome(Integer projectId);
 
     List<Project> searchProjectsByName(String name); // Nouvelle méthode
+
+    Project updateProjectImage(int idProject, String image);
+
+    List<Project> findProjectsWithImages();
 }
