@@ -16,7 +16,7 @@
     overflow: hidden;
 
     .card-header {
-      background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+      background: linear-gradient(135deg, #CFB53B 0%, #E6C244 100%);
       padding: 2rem 1.5rem;
       border-bottom: none;
 
@@ -47,18 +47,18 @@
 
   .form-range {
     height: 6px;
-    
+
     &::-webkit-slider-thumb {
-      background: #FFD700;
-      box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+      background: #CFB53B;
+      box-shadow: 0 0 5px rgba(207, 181, 59, 0.3);
       height: 20px;
       width: 20px;
       cursor: pointer;
     }
-    
+
     &::-moz-range-thumb {
-      background: #FFD700;
-      box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+      background: #CFB53B;
+      box-shadow: 0 0 5px rgba(207, 181, 59, 0.3);
       height: 20px;
       width: 20px;
       cursor: pointer;
@@ -73,8 +73,8 @@
     transition: all 0.3s ease;
 
     &:focus {
-      border-color: #FFD700;
-      box-shadow: 0 0 0 0.2rem rgba(255, 215, 0, 0.25);
+      border-color: #CFB53B;
+      box-shadow: 0 0 0 0.2rem rgba(207, 181, 59, 0.25);
       outline: none;
     }
   }
@@ -93,7 +93,7 @@
     border-radius: 16px;
     padding: 2rem;
     height: 100%;
-    border-left: 4px solid #FFD700;
+    border-left: 4px solid #CFB53B;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
 
     .results-title {
@@ -101,7 +101,7 @@
       font-weight: 700;
       color: #333333;
       margin-bottom: 1.5rem;
-      border-bottom: 2px solid #FFD700;
+      border-bottom: 2px solid #CFB53B;
       padding-bottom: 0.75rem;
     }
 
@@ -131,22 +131,22 @@
   }
 
   .btn-primary {
-    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+    background: linear-gradient(135deg, #CFB53B 0%, #E6C244 100%);
     border: none;
-    color: #333333;
+    color: white;
     font-weight: 600;
     padding: 0.75rem 1.5rem;
     border-radius: 8px;
     transition: all 0.3s ease;
 
     &:hover {
-      background: linear-gradient(135deg, #FFA500 0%, #FF8C00 100%);
+      background: linear-gradient(135deg, #E6C244 0%, #CFB53B 100%);
       transform: translateY(-2px);
-      box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);
+      box-shadow: 0 5px 15px rgba(207, 181, 59, 0.3);
     }
 
     &:focus {
-      box-shadow: 0 0 0 0.25rem rgba(255, 215, 0, 0.25);
+      box-shadow: 0 0 0 0.25rem rgba(207, 181, 59, 0.25);
     }
   }
 

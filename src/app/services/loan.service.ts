@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { Loan } from './models/loan.model';
 
 @Injectable({
@@ -29,7 +30,27 @@ export class LoanService {
 
   // Récupérer tous les prêts
   getAllLoans(): Observable<Loan[]> {
-    return this.http.get<Loan[]>(`${this.apiUrl}`);
+    return this.http.get<Loan[]>(`${this.apiUrl}`).pipe(
+      map((loans: any[]) => {
+        return loans.map(loan => {
+          // Normaliser le type de prêt
+          if (typeof loan.loantype === 'string') {
+            loan.loantype = {
+              id_loantype: 0,
+              name: loan.loantype,
+              description: ''
+            };
+          } else if (!loan.loantype) {
+            loan.loantype = {
+              id_loantype: 0,
+              name: 'Non spécifié',
+              description: ''
+            };
+          }
+          return loan;
+        });
+      })
+    );
   }
 
   // Mettre à jour un prêt
@@ -38,9 +59,16 @@ export class LoanService {
       amount: loan.amount,
       loantype: loan.loantype.name,
       interest_rate: loan.interest_rate,
-      refund_duration: loan.refund_duration
+      refund_duration: loan.refund_duration,
+      status: loan.status // Assurez-vous d'inclure le statut
     };
     return this.http.put<Loan>(`${this.apiUrl}/${id}`, body);
+  }
+
+  // Mettre à jour uniquement le statut d'un prêt
+  updateLoanStatus(id: number, status: string): Observable<Loan> {
+    console.log(`Mise à jour du statut du prêt #${id} vers: ${status}`);
+    return this.http.put<Loan>(`${this.apiUrl}/${id}/status`, { status });
   }
 
   // Supprimer un prêt
@@ -62,4 +90,10 @@ export class LoanService {
   downloadLoanHistory(userId: number): Observable<Blob> {
     return this.http.get(`${this.apiUrl}/${userId}/pdf`, { responseType: 'blob' });
   }
+
+  // Télécharger le contrat de prêt
+  downloadLoanContract(loanId: number): Observable<Blob> {
+    return this.http.get(`http://localhost:8085/api/documents/loan-contract/${loanId}`, { responseType: 'blob' });
+  }
 }
+

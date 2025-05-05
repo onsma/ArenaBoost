@@ -12,7 +12,12 @@ import 'chart.js/auto';
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit {
-  loanStats: LoanStatistics | null = null;
+  loanStats: LoanStatistics = {
+    totalLoans: 0,
+    approvedLoans: 0,
+    pendingLoans: 0,
+    totalAmount: 0
+  };
   activeUsers: ActiveUser[] = [];
 
   @ViewChild('loanStatusChart') private loanStatusChartRef!: ElementRef;
@@ -91,6 +96,10 @@ export class DashboardComponent implements OnInit {
 
   navigateToLoanList(): void {
     this.router.navigate(['/loan-list']);
+  }
+
+  navigateToLoanRequest(): void {
+    this.router.navigate(['/loan-request']);
   }
 
   loadLoanTypeChart(): void {

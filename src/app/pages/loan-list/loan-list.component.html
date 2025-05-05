@@ -1,12 +1,12 @@
 <div class="loan-list-container">
   <div class="loan-list-header">
     <div class="header-content">
-      <h1>Liste des Prêts</h1>
-      <p class="subtitle">Consultez tous les prêts disponibles dans notre système</p>
+      <h1 class="fancy-title">Loan List</h1>
+      <p class="subtitle">View all loans available in our system</p>
     </div>
     <div class="header-actions">
       <button class="refresh-button" (click)="loadLoans()">
-        <i class="refresh-icon">↻</i> Actualiser
+        <i class="refresh-icon">↻</i> Refresh
       </button>
     </div>
   </div>
@@ -15,8 +15,90 @@
     <div class="summary-card">
       <div class="summary-icon">📊</div>
       <div class="summary-content">
-        <h3>{{ loans.length }}</h3>
-        <p>Prêts au total</p>
+        <h3>{{ filteredLoans.length }}</h3>
+        <p>{{ filteredLoans.length !== loans.length ? 'Filtered Loans' : 'Total Loans' }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search Panel -->
+  <div class="search-panel">
+    <div class="search-header">
+      <h3>Search Filters</h3>
+      <button class="toggle-search-btn" (click)="toggleSearchPanel()">
+        {{ isSearchPanelOpen ? 'Hide Filters' : 'Show Filters' }}
+      </button>
+    </div>
+
+    <div class="search-form" *ngIf="isSearchPanelOpen">
+      <div class="row">
+        <div class="col-md-3 mb-3">
+          <label for="searchId" class="form-label">Loan ID</label>
+          <input type="number" class="form-control" id="searchId" [(ngModel)]="searchCriteria.id" placeholder="Enter ID">
+        </div>
+
+        <div class="col-md-3 mb-3">
+          <label for="searchAmount" class="form-label">Amount Range</label>
+          <div class="input-group">
+            <input type="number" class="form-control" id="searchMinAmount" [(ngModel)]="searchCriteria.minAmount" placeholder="Min">
+            <span class="input-group-text">-</span>
+            <input type="number" class="form-control" id="searchMaxAmount" [(ngModel)]="searchCriteria.maxAmount" placeholder="Max">
+          </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+          <label for="searchType" class="form-label">Loan Type</label>
+          <select class="form-select" id="searchType" [(ngModel)]="searchCriteria.loanType">
+            <option value="">All Types</option>
+            <option *ngFor="let type of loanTypes" [value]="type">{{ type }}</option>
+          </select>
+        </div>
+
+        <div class="col-md-3 mb-3">
+          <label for="searchStatus" class="form-label">Status</label>
+          <select class="form-select" id="searchStatus" [(ngModel)]="searchCriteria.status">
+            <option value="">All Statuses</option>
+            <option *ngFor="let status of statuses" [value]="status.value">{{ status.label }}</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-3 mb-3">
+          <label for="searchInterestRate" class="form-label">Interest Rate Range</label>
+          <div class="input-group">
+            <input type="number" class="form-control" id="searchMinRate" [(ngModel)]="searchCriteria.minRate" placeholder="Min %">
+            <span class="input-group-text">-</span>
+            <input type="number" class="form-control" id="searchMaxRate" [(ngModel)]="searchCriteria.maxRate" placeholder="Max %">
+          </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+          <label for="searchDuration" class="form-label">Duration Range (months)</label>
+          <div class="input-group">
+            <input type="number" class="form-control" id="searchMinDuration" [(ngModel)]="searchCriteria.minDuration" placeholder="Min">
+            <span class="input-group-text">-</span>
+            <input type="number" class="form-control" id="searchMaxDuration" [(ngModel)]="searchCriteria.maxDuration" placeholder="Max">
+          </div>
+        </div>
+
+        <div class="col-md-6 mb-3">
+          <label for="searchDateRange" class="form-label">Request Date Range</label>
+          <div class="input-group">
+            <input type="date" class="form-control" id="searchStartDate" [(ngModel)]="searchCriteria.startDate" placeholder="Start Date">
+            <span class="input-group-text">-</span>
+            <input type="date" class="form-control" id="searchEndDate" [(ngModel)]="searchCriteria.endDate" placeholder="End Date">
+          </div>
+        </div>
+      </div>
+
+      <div class="search-actions">
+        <button class="search-btn" (click)="applyFilters()">
+          <i class="search-icon">🔍</i> Search
+        </button>
+        <button class="reset-btn" (click)="resetFilters()">
+          <i class="reset-icon">↺</i> Reset Filters
+        </button>
       </div>
     </div>
   </div>
@@ -24,7 +106,7 @@
   <!-- Loading Indicator -->
   <div class="loading-container" *ngIf="loading">
     <div class="spinner"></div>
-    <p>Chargement des prêts...</p>
+    <p>Loading loans...</p>
   </div>
 
   <!-- Error Message -->
@@ -33,7 +115,7 @@
       <i class="error-icon">⚠️</i>
       <p>{{ error }}</p>
     </div>
-    <button class="retry-button" (click)="loadLoans()">Réessayer</button>
+    <button class="retry-button" (click)="loadLoans()">Retry</button>
   </div>
 
   <!-- Loan List Table -->
@@ -42,19 +124,23 @@
       <thead>
         <tr>
           <th class="header-id">ID</th>
-          <th class="header-amount">Montant</th>
+          <th class="header-amount">Amount</th>
           <th class="header-type">Type</th>
-          <th class="header-rate">Taux d'intérêt</th>
-          <th class="header-duration">Durée (mois)</th>
-          <th class="header-status">Statut</th>
-          <th class="header-date">Date de demande</th>
+          <th class="header-rate">Interest Rate</th>
+          <th class="header-duration">Duration (months)</th>
+          <th class="header-status">Status</th>
+          <th class="header-date">Request Date</th>
+          <th class="header-actions">Actions</th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let loan of paginatedLoans">
           <td class="loan-id">{{ loan.id_loan }}</td>
           <td class="loan-amount">{{ loan.amount | currency:'TND':'symbol':'1.0-2' }}</td>
-          <td class="loan-type">{{ loan.loantype.name }}</td>
+          <td class="loan-type">
+            <span *ngIf="loan.loantype && loan.loantype.name">{{ loan.loantype.name }}</span>
+            <span *ngIf="!loan.loantype || !loan.loantype.name" class="missing-type">Not specified</span>
+          </td>
           <td class="loan-rate">{{ loan.interest_rate }}%</td>
           <td class="loan-duration">{{ loan.refund_duration }}</td>
           <td class="loan-status">
@@ -63,6 +149,19 @@
             </span>
           </td>
           <td class="loan-date">{{ loan.requestDate | date:'dd/MM/yyyy' }}</td>
+          <td class="loan-actions">
+            <div class="action-buttons">
+              <button class="action-btn edit-btn" title="Edit" (click)="editLoan(loan)">
+                <i class="action-icon">✏️</i>
+              </button>
+              <button class="action-btn delete-btn" title="Delete" (click)="deleteLoan(loan.id_loan || 0)">
+                <i class="action-icon">🗑️</i>
+              </button>
+              <button class="action-btn download-btn" title="Download Contract" (click)="downloadContract(loan.id_loan || 0)">
+                <i class="action-icon">📄</i>
+              </button>
+            </div>
+          </td>
         </tr>
       </tbody>
     </table>
@@ -88,13 +187,59 @@
       </div>
 
       <div class="pagination-info">
-        Page {{ currentPage }} sur {{ totalPages }} ({{ loans.length }} prêts au total)
+        Page {{ currentPage }} of {{ totalPages }}
+        ({{ filteredLoans.length }} {{ filteredLoans.length !== loans.length ? 'filtered' : 'total' }} loans)
       </div>
     </div>
   </div>
 
   <!-- No Loans Message -->
   <div class="no-loans-container" *ngIf="!loading && !error && loans.length === 0">
-    <p>Aucun prêt disponible pour le moment.</p>
+    <p>No loans available at the moment.</p>
+  </div>
+</div>
+
+<!-- Edit Loan Modal -->
+<div class="modal fade" id="editLoanModal" tabindex="-1" aria-labelledby="editLoanModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editLoanModalLabel">Edit Loan</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form *ngIf="selectedLoan">
+          <div class="mb-3">
+            <label for="loanAmount" class="form-label">Amount</label>
+            <input type="number" class="form-control" id="loanAmount" [(ngModel)]="selectedLoan.amount" name="amount">
+          </div>
+          <div class="mb-3">
+            <label for="loanType" class="form-label">Loan Type</label>
+            <input type="text" class="form-control" id="loanType" [(ngModel)]="selectedLoan.loantype.name" name="loantype" disabled>
+          </div>
+          <div class="mb-3">
+            <label for="loanInterestRate" class="form-label">Interest Rate (%)</label>
+            <input type="number" class="form-control" id="loanInterestRate" [(ngModel)]="selectedLoan.interest_rate" name="interestRate" step="0.1">
+          </div>
+          <div class="mb-3">
+            <label for="loanDuration" class="form-label">Duration (months)</label>
+            <input type="number" class="form-control" id="loanDuration" [(ngModel)]="selectedLoan.refund_duration" name="duration">
+          </div>
+          <div class="mb-3">
+            <label for="loanStatus" class="form-label">Status</label>
+            <select class="form-select" id="loanStatus" [(ngModel)]="selectedLoan.status" name="status">
+              <option value="pending">Pending</option>
+              <option value="approved">Approved</option>
+              <option value="rejected">Rejected</option>
+              <option value="completed">Completed</option>
+            </select>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary save-btn" (click)="saveLoanChanges()">Save</button>
+      </div>
+    </div>
   </div>
 </div>

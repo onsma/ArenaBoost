@@ -16,16 +16,16 @@ export class LoanSimulationComponent implements OnInit {
   loading = false;
   error = '';
   showResults = false;
-  
+
   // Valeurs par défaut pour les sliders
   minAmount = 1000;
   maxAmount = 100000;
   defaultAmount = 5000;
-  
+
   minDuration = 1;
   maxDuration = 60;
   defaultDuration = 12;
-  
+
   minInterestRate = 0;
   maxInterestRate = 20;
   defaultInterestRate = 5;
@@ -45,14 +45,14 @@ export class LoanSimulationComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadLoanTypes();
-    
+
     // Réagir aux changements de valeurs pour mettre à jour la simulation en temps réel
     this.simulationForm.valueChanges.subscribe(() => {
       if (this.simulationForm.valid) {
         this.simulateLoan();
       }
     });
-    
+
     // Simulation initiale
     this.simulateLoan();
   }
@@ -66,7 +66,7 @@ export class LoanSimulationComponent implements OnInit {
         }
       },
       (error) => {
-        this.error = 'Erreur lors du chargement des types de prêt: ' + error.message;
+        this.error = 'Error loading loan types: ' + error.message;
         console.error('Error loading loan types:', error);
       }
     );
@@ -75,13 +75,13 @@ export class LoanSimulationComponent implements OnInit {
   simulateLoan(): void {
     if (this.simulationForm.valid) {
       this.loading = true;
-      
+
       const request: LoanSimulationRequest = {
         amount: this.simulationForm.value.amount,
         duration: this.simulationForm.value.duration,
         interestRate: this.simulationForm.value.interestRate
       };
-      
+
       this.loanSimulationService.simulateLoan(request).subscribe(
         (response: LoanSimulationResponse) => {
           this.simulationResult = response;
@@ -89,56 +89,56 @@ export class LoanSimulationComponent implements OnInit {
           this.loading = false;
         },
         (error) => {
-          this.error = 'Erreur lors de la simulation: ' + error.message;
+          this.error = 'Error during simulation: ' + error.message;
           this.loading = false;
           console.error('Error simulating loan:', error);
-          
-          // Simulation côté client en cas d'erreur avec le backend
+
+          // Client-side simulation in case of backend error
           this.simulateLocally(request);
         }
       );
     }
   }
-  
+
   // Méthode de secours pour simuler le prêt localement si l'API échoue
   simulateLocally(request: LoanSimulationRequest): void {
     const amount = request.amount;
     const duration = request.duration;
     const interestRate = request.interestRate;
-    
+
     // Conversion du taux d'intérêt annuel en taux mensuel
     const monthlyRate = (interestRate / 100) / 12;
-    
+
     // Calcul de la mensualité avec la formule de l'annuité
     const monthlyPayment = (amount * monthlyRate) / (1 - Math.pow(1 + monthlyRate, -duration));
-    
+
     // Calcul du coût total et des intérêts
     const totalAmount = monthlyPayment * duration;
     const totalInterest = totalAmount - amount;
-    
+
     this.simulationResult = {
       monthlyPayment,
       totalInterest,
       totalAmount
     };
-    
+
     this.showResults = true;
   }
-  
-  // Formatter les valeurs pour l'affichage
+
+  // Format values for display
   formatAmount(value: number): string {
-    return value.toLocaleString('fr-FR') + ' DT';
+    return value.toLocaleString('en-US') + ' TND';
   }
-  
+
   formatDuration(value: number): string {
-    return value + (value > 1 ? ' mois' : ' mois');
+    return value + (value > 1 ? ' months' : ' month');
   }
-  
+
   formatInterestRate(value: number): string {
     return value + ' %';
   }
-  
-  // Réinitialiser le formulaire
+
+  // Reset the form
   resetForm(): void {
     this.simulationForm.reset({
       loanType: this.loanTypes.length > 0 ? this.loanTypes[0].name : '',

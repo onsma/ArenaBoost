@@ -21,7 +21,7 @@
     }
 
     .card-header {
-      background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+      background: linear-gradient(135deg, #CFB53B 0%, #966F33 100%);
       border-radius: 20px 20px 0 0;
       padding: 2rem 1.5rem;
       margin-bottom: 1.5rem;
@@ -32,6 +32,30 @@
         text-transform: uppercase;
         letter-spacing: 1px;
         color: #333333;
+
+        &.fancy-title {
+          font-family: 'Montserrat', sans-serif;
+          font-size: 2rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 3px;
+          color: #FFFFFF;
+          text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+          margin-top: 0.5rem;
+          text-align: center;
+          line-height: 1.2;
+          position: relative;
+
+          &:after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 3px;
+            background: #FFFFFF;
+            margin: 8px auto 0;
+            border-radius: 2px;
+          }
+        }
       }
     }
 
@@ -76,7 +100,7 @@
         padding: 1rem;
         font-weight: 600;
         border-radius: 8px;
-        background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+        background: linear-gradient(135deg, #CFB53B 0%, #966F33 100%);
         border: none;
         color: #333333;
         font-size: 1.1rem;
@@ -85,8 +109,8 @@
 
         &:hover {
           transform: translateY(-3px);
-          box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);
-          background: linear-gradient(135deg, #FFA500 0%, #FF8C00 100%);
+          box-shadow: 0 5px 15px rgba(207, 181, 59, 0.3);
+          background: linear-gradient(135deg, #966F33 0%, #7F5217 100%);
         }
 
         &:disabled {
@@ -102,7 +126,7 @@
         padding: 1rem;
         font-weight: 600;
         border-radius: 8px;
-        border: 2px solid #FFD700;
+        border: 2px solid #CFB53B;
         color: #333333;
         font-size: 1.1rem;
         transition: all 0.3s ease;
@@ -117,9 +141,9 @@
         }
 
         &:hover {
-          background: rgba(255, 215, 0, 0.1);
+          background: rgba(207, 181, 59, 0.1);
           transform: translateY(-2px);
-          box-shadow: 0 3px 10px rgba(255, 215, 0, 0.1);
+          box-shadow: 0 3px 10px rgba(207, 181, 59, 0.1);
         }
       }
     }

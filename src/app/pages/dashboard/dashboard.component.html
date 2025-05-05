@@ -1,7 +1,14 @@
 <div class="dashboard-container">
   <!-- Header -->
   <div class="dashboard-header">
-    <h1 class="dashboard-title">Tableau de Bord</h1>
+    <div class="header-content">
+      <h1 class="dashboard-title">Tableau de Bord</h1>
+    </div>
+    <div class="header-actions">
+      <button class="create-loan-btn" (click)="navigateToLoanRequest()">
+        <i class="bi bi-plus-circle"></i> Create loan request
+      </button>
+    </div>
   </div>
 
   <!-- Main Content -->
@@ -10,19 +17,19 @@
     <div class="stats-cards">
       <div class="stat-card clickable" (click)="navigateToLoanList()">
         <h3>Total des Prêts</h3>
-        <p class="stat-value">{{ loanStats?.totalLoans | number }}</p>
+        <p class="stat-value">{{ loanStats.totalLoans | number }}</p>
       </div>
       <div class="stat-card">
         <h3>Utilisateurs Actifs</h3>
-        <p class="stat-value">{{ activeUsers?.length | number }}</p>
+        <p class="stat-value">{{ activeUsers.length | number }}</p>
       </div>
       <div class="stat-card">
         <h3>Montant Total</h3>
-        <p class="stat-value">{{ loanStats?.totalAmount | currency:'TND' }}</p>
+        <p class="stat-value">{{ loanStats.totalAmount | currency:'TND' }}</p>
       </div>
       <div class="stat-card">
         <h3>Nouvelles Demandes</h3>
-        <p class="stat-value">{{ loanStats?.pendingLoans | number }}</p>
+        <p class="stat-value">{{ loanStats.pendingLoans | number }}</p>
       </div>
     </div>
 

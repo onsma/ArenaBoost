@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { LoanService } from './services/loan.service';
 import { LoanTypeService } from './services/loantype.service';
 import { DashboardService } from './services/dashboard.service';
@@ -41,6 +41,7 @@ import { LoanListComponent } from './pages/loan-list/loan-list.component';
     AppRoutingModule,
     HttpClientModule,
     ReactiveFormsModule,
+    FormsModule,
     RouterModule
   ],
   providers: [

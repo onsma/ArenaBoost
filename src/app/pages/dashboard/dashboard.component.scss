@@ -8,6 +8,18 @@
   margin-bottom: 2rem;
   padding-bottom: 1rem;
   border-bottom: 1px solid #dee2e6;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .header-content {
+    flex: 1;
+  }
+
+  .header-actions {
+    display: flex;
+    justify-content: flex-end;
+  }
 }
 
 .dashboard-title {
@@ -115,6 +127,37 @@
   }
 }
 
+.create-loan-btn {
+  background: linear-gradient(135deg, #CFB53B 0%, #E6C244 50%, #CFB53B 100%);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 30px;
+  font-weight: 600;
+  font-family: 'Rubik', sans-serif;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(207, 181, 59, 0.3);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(207, 181, 59, 0.4);
+    background: linear-gradient(135deg, #E6C244 0%, #CFB53B 50%, #E6C244 100%);
+  }
+
+  &:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px 4px rgba(207, 181, 59, 0.3);
+  }
+
+  i {
+    font-size: 1.1rem;
+  }
+}
+
 @media (max-width: 768px) {
   .stats-cards {
     grid-template-columns: 1fr;
@@ -122,5 +165,16 @@
 
   .charts-container {
     grid-template-columns: 1fr;
+  }
+
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+
+    .header-actions {
+      width: 100%;
+      justify-content: center;
+    }
   }
 }

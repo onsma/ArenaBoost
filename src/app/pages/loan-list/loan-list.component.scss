@@ -10,7 +10,7 @@
   align-items: center;
   margin-bottom: 2rem;
   padding-bottom: 1rem;
-  border-bottom: 2px solid #CFB53B; /* Couleur gold de la charte graphique */
+  border-bottom: none;
 
   .header-content {
     h1 {
@@ -19,6 +19,30 @@
       color: #2c3e50;
       margin-bottom: 0.5rem;
       font-size: 2.2rem;
+
+      &.fancy-title {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 2.2rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 3px;
+        color: #2c3e50;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        margin: 0;
+        padding: 0;
+        line-height: 1.2;
+        position: relative;
+
+        &:after {
+          content: '';
+          display: block;
+          width: 60px;
+          height: 3px;
+          background: #CFB53B;
+          margin: 8px 0 0;
+          border-radius: 2px;
+        }
+      }
     }
 
     .subtitle {
@@ -54,7 +78,7 @@
 
 .loan-summary {
   display: flex;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
 
   .summary-card {
     background-color: #f8f9fa;
@@ -233,6 +257,11 @@
           &.loan-duration {
             text-align: center;
           }
+
+          .missing-type {
+            color: #999;
+            font-style: italic;
+          }
         }
 
         &:last-child td {
@@ -280,7 +309,7 @@
   border: 1px solid #f5c6cb;
 }
 
-.status-paid {
+.status-paid, .status-completed {
   background-color: #d1ecf1;
   color: #0c5460;
   border: 1px solid #bee5eb;
@@ -346,6 +375,99 @@
   font-size: 0.9rem;
 }
 
+// Styles pour le modal
+.modal-content {
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+
+  .modal-header {
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #CFB53B;
+
+    .modal-title {
+      color: #2c3e50;
+      font-weight: 600;
+    }
+  }
+
+  .modal-footer {
+    border-top: 1px solid #e9ecef;
+
+    .save-btn {
+      background-color: #CFB53B;
+      border-color: #CFB53B;
+
+      &:hover {
+        background-color: darken(#CFB53B, 10%);
+        border-color: darken(#CFB53B, 10%);
+      }
+    }
+  }
+}
+
+// Styles pour les boutons d'action
+.loan-actions {
+  .action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .action-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 4px;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    &:active {
+      transform: translateY(0);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    }
+
+    .action-icon {
+      font-size: 1.2rem;
+    }
+  }
+
+  .edit-btn {
+    background-color: #CFB53B; // Gold color
+    color: white;
+
+    &:hover {
+      background-color: darken(#CFB53B, 10%);
+    }
+  }
+
+  .delete-btn {
+    background-color: #dc3545; // Red color
+    color: white;
+
+    &:hover {
+      background-color: darken(#dc3545, 10%);
+    }
+  }
+
+  .download-btn {
+    background-color: #28a745; // Green color
+    color: white;
+
+    &:hover {
+      background-color: darken(#28a745, 10%);
+    }
+  }
+}
+
 .no-loans-container {
   background-color: white;
   border-radius: 8px;
@@ -357,6 +479,122 @@
     color: #6c757d;
     font-size: 1.1rem;
     margin: 0;
+  }
+}
+
+// Styles pour le panneau de recherche
+.search-panel {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+  overflow: hidden;
+
+  .search-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    background: linear-gradient(135deg, #CFB53B 0%, #E6C244 100%);
+    color: white;
+
+    h3 {
+      margin: 0;
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+
+    .toggle-search-btn {
+      background-color: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 0.5rem 1rem;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: background-color 0.2s;
+
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.3);
+      }
+    }
+  }
+
+  .search-form {
+    padding: 1.5rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+
+    .form-label {
+      font-weight: 600;
+      color: #2c3e50;
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+    }
+
+    .form-control, .form-select {
+      border: 1px solid #e0e0e0;
+      border-radius: 4px;
+      padding: 0.5rem 0.75rem;
+      font-size: 0.95rem;
+      transition: all 0.2s;
+
+      &:focus {
+        border-color: #CFB53B;
+        box-shadow: 0 0 0 0.2rem rgba(207, 181, 59, 0.25);
+        outline: none;
+      }
+    }
+
+    .input-group-text {
+      background-color: #f8f9fa;
+      border: 1px solid #e0e0e0;
+      color: #6c757d;
+    }
+
+    .search-actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 1.5rem;
+      gap: 1rem;
+
+      .search-btn, .reset-btn {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.6rem 1.2rem;
+        border-radius: 4px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+
+      .search-btn {
+        background-color: #CFB53B;
+        color: white;
+        border: none;
+
+        &:hover {
+          background-color: darken(#CFB53B, 10%);
+          transform: translateY(-2px);
+          box-shadow: 0 4px 8px rgba(207, 181, 59, 0.3);
+        }
+
+        &:active {
+          transform: translateY(0);
+        }
+      }
+
+      .reset-btn {
+        background-color: #f8f9fa;
+        color: #6c757d;
+        border: 1px solid #e0e0e0;
+
+        &:hover {
+          background-color: #e9ecef;
+          color: #495057;
+        }
+      }
+    }
   }
 }
 
@@ -374,6 +612,19 @@
 
     .pagination {
       margin-bottom: 1rem;
+    }
+  }
+
+  .search-panel {
+    .search-form {
+      .search-actions {
+        flex-direction: column;
+
+        .search-btn, .reset-btn {
+          width: 100%;
+          justify-content: center;
+        }
+      }
     }
   }
 }

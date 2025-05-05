@@ -19,7 +19,7 @@ export class LoanRequestComponent implements OnInit {
   showSuccessMessage = false;
   successMessage = '';
 
-  userId: number = 1; // À modifier pour obtenir l'ID de l'utilisateur connecté
+  userId: number = 1; // To be modified to get the connected user's ID
 
   loanTypes: LoanType[] = [];
 
@@ -56,7 +56,7 @@ export class LoanRequestComponent implements OnInit {
         this.loanTypes = loanTypes;
       },
       (error: any) => {
-        this.error = 'Erreur lors du chargement des types de prêt: ' + error.message;
+        this.error = 'Error loading loan types: ' + error.message;
         console.error('Error loading loan types:', error);
       }
     );
@@ -81,18 +81,18 @@ export class LoanRequestComponent implements OnInit {
         }
       };
 
-      // Récupérer l'ID de l'utilisateur connecté (à implémenter)
-      const userId = 1; // À remplacer par la vraie logique d'authentification
+      // Get the connected user's ID (to be implemented)
+      const userId = 1; // To be replaced with real authentication logic
 
       this.loanService.createLoan(loan).subscribe(
         (response: Loan) => {
           this.loading = false;
 
-          // Afficher le message de succès
+          // Display success message
           this.showSuccessMessage = true;
-          this.successMessage = 'Votre demande de prêt a été soumise avec succès!';
+          this.successMessage = 'Your loan request has been submitted successfully!';
 
-          // Rediriger après un court délai pour que l'utilisateur puisse voir le message
+          // Redirect after a short delay to allow the user to see the message
           setTimeout(() => {
             this.router.navigate(['/loan-confirmation', response.id_loan]);
           }, 2000);

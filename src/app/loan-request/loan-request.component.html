@@ -4,37 +4,37 @@
       <div class="col-md-8">
         <div class="card shadow">
           <div class="card-header bg-warning text-white">
-            <h3 class="mb-0">Demande de Prêt Sportif</h3>
+            <h3 class="mb-0 fancy-title">Sports Loan Request</h3>
           </div>
           <div class="card-body">
             <form [formGroup]="loanForm" (ngSubmit)="onSubmit()">
               <div class="mb-3">
-                <label for="userId" class="form-label">ID Utilisateur</label>
+                <label for="userId" class="form-label">User ID</label>
                 <input type="number" class="form-control" id="userId" formControlName="userId">
                 <div *ngIf="loanForm.get('userId')?.invalid && (loanForm.get('userId')?.dirty || loanForm.get('userId')?.touched)" class="text-danger">
-                  <small *ngIf="loanForm.get('userId')?.errors?.['required']">L'ID utilisateur est requis</small>
+                  <small *ngIf="loanForm.get('userId')?.errors?.['required']">User ID is required</small>
                 </div>
               </div>
 
               <div class="mb-3">
-                <label for="amount" class="form-label">Montant du prêt</label>
+                <label for="amount" class="form-label">Loan Amount</label>
                 <input type="number" class="form-control" id="amount" formControlName="amount">
                 <div *ngIf="loanForm.get('amount')?.invalid && (loanForm.get('amount')?.dirty || loanForm.get('amount')?.touched)" class="text-danger">
-                  <small *ngIf="loanForm.get('amount')?.errors?.['required']">Le montant est requis</small>
-                  <small *ngIf="loanForm.get('amount')?.errors?.['min']">Le montant minimum est 1000</small>
+                  <small *ngIf="loanForm.get('amount')?.errors?.['required']">Amount is required</small>
+                  <small *ngIf="loanForm.get('amount')?.errors?.['min']">Minimum amount is 1000</small>
                 </div>
               </div>
 
               <div class="mb-3">
-                <label for="loantype" class="form-label">Type de prêt</label>
+                <label for="loantype" class="form-label">Loan Type</label>
                 <select class="form-select" id="loantype" formControlName="loantype">
-                  <option value="">Sélectionnez un type</option>
+                  <option value="">Select a type</option>
                   <option *ngFor="let type of loanTypes" [value]="type.name">
                     {{ type.name }} - {{ type.description }}
                   </option>
                 </select>
                 <div *ngIf="loanForm.get('loantype')?.invalid && (loanForm.get('loantype')?.dirty || loanForm.get('loantype')?.touched)" class="text-danger">
-                  <small *ngIf="loanForm.get('loantype')?.errors?.['required']">Le type de prêt est requis</small>
+                  <small *ngIf="loanForm.get('loantype')?.errors?.['required']">Loan type is required</small>
                 </div>
                 <div *ngIf="error" class="text-danger">
                   <small>{{ error }}</small>
@@ -42,20 +42,20 @@
               </div>
 
               <div class="mb-3">
-                <label for="interest_rate" class="form-label">Taux d'intérêt (%)</label>
+                <label for="interest_rate" class="form-label">Interest Rate (%)</label>
                 <input type="number" class="form-control" id="interest_rate" formControlName="interest_rate">
                 <div *ngIf="loanForm.get('interest_rate')?.invalid && (loanForm.get('interest_rate')?.dirty || loanForm.get('interest_rate')?.touched)" class="text-danger">
-                  <small *ngIf="loanForm.get('interest_rate')?.errors?.['required']">Le taux d'intérêt est requis</small>
-                  <small *ngIf="loanForm.get('interest_rate')?.errors?.['min']">Le taux minimum est 0</small>
+                  <small *ngIf="loanForm.get('interest_rate')?.errors?.['required']">Interest rate is required</small>
+                  <small *ngIf="loanForm.get('interest_rate')?.errors?.['min']">Minimum rate is 0</small>
                 </div>
               </div>
 
               <div class="mb-3">
-                <label for="refund_duration" class="form-label">Durée de remboursement (mois)</label>
+                <label for="refund_duration" class="form-label">Repayment Duration (months)</label>
                 <input type="number" class="form-control" id="refund_duration" formControlName="refund_duration">
                 <div *ngIf="loanForm.get('refund_duration')?.invalid && (loanForm.get('refund_duration')?.dirty || loanForm.get('refund_duration')?.touched)" class="text-danger">
-                  <small *ngIf="loanForm.get('refund_duration')?.errors?.['required']">La durée est requise</small>
-                  <small *ngIf="loanForm.get('refund_duration')?.errors?.['min']">La durée minimum est 1 mois</small>
+                  <small *ngIf="loanForm.get('refund_duration')?.errors?.['required']">Duration is required</small>
+                  <small *ngIf="loanForm.get('refund_duration')?.errors?.['min']">Minimum duration is 1 month</small>
                 </div>
               </div>
 
@@ -63,7 +63,7 @@
                 <div class="alert alert-danger">{{ error }}</div>
               </div>
 
-              <!-- Message de succès -->
+              <!-- Success message -->
               <div class="mb-3" *ngIf="showSuccessMessage">
                 <div class="alert alert-success">
                   <i class="bi bi-check-circle-fill me-2"></i>
@@ -72,12 +72,12 @@
               </div>
 
               <button type="submit" class="btn btn-warning" [disabled]="loanForm.invalid || loading || showSuccessMessage">
-                <span *ngIf="!loading">Soumettre la demande</span>
-                <span *ngIf="loading">En cours d'envoi...</span>
+                <span *ngIf="!loading">Submit Request</span>
+                <span *ngIf="loading">Submitting...</span>
               </button>
 
               <button type="button" class="btn btn-outline-warning mt-3" (click)="navigateToSimulation()">
-                Simuler un prêt
+                Simulate a Loan
               </button>
             </form>
           </div>

@@ -4,15 +4,15 @@
       <div class="col-md-10">
         <div class="card shadow">
           <div class="card-header">
-            <h2 class="mb-0">Simulation de Prêt</h2>
-            <p class="text-muted mb-0">Estimez vos mensualités et le coût total de votre crédit sportif</p>
+            <h2 class="mb-0">Loan Simulation</h2>
+            <p class="text-muted mb-0">Estimate your monthly payments and the total cost of your sports loan</p>
           </div>
           <div class="card-body">
             <form [formGroup]="simulationForm">
               <div class="row mb-4">
                 <div class="col-md-6">
                   <div class="form-group mb-4">
-                    <label for="loanType" class="form-label">Type de crédit</label>
+                    <label for="loanType" class="form-label">Loan Type</label>
                     <select class="form-select" id="loanType" formControlName="loanType">
                       <option *ngFor="let type of loanTypes" [value]="type.name">
                         {{ type.name }} - {{ type.description }}
@@ -21,36 +21,36 @@
                   </div>
 
                   <div class="form-group mb-4">
-                    <label for="amount" class="form-label">Montant emprunté</label>
+                    <label for="amount" class="form-label">Loan Amount</label>
                     <div class="d-flex align-items-center">
-                      <input type="range" class="form-range flex-grow-1" id="amount" 
-                             formControlName="amount" 
-                             [min]="minAmount" 
-                             [max]="maxAmount" 
+                      <input type="range" class="form-range flex-grow-1" id="amount"
+                             formControlName="amount"
+                             [min]="minAmount"
+                             [max]="maxAmount"
                              [step]="1000">
                       <span class="amount-value ms-3">{{ formatAmount(simulationForm.value.amount) }}</span>
                     </div>
                   </div>
 
                   <div class="form-group mb-4">
-                    <label for="duration" class="form-label">Durée du prêt</label>
+                    <label for="duration" class="form-label">Loan Duration</label>
                     <div class="d-flex align-items-center">
-                      <input type="range" class="form-range flex-grow-1" id="duration" 
-                             formControlName="duration" 
-                             [min]="minDuration" 
-                             [max]="maxDuration" 
+                      <input type="range" class="form-range flex-grow-1" id="duration"
+                             formControlName="duration"
+                             [min]="minDuration"
+                             [max]="maxDuration"
                              [step]="1">
                       <span class="duration-value ms-3">{{ formatDuration(simulationForm.value.duration) }}</span>
                     </div>
                   </div>
 
                   <div class="form-group mb-4">
-                    <label for="interestRate" class="form-label">Taux d'intérêt</label>
+                    <label for="interestRate" class="form-label">Interest Rate</label>
                     <div class="d-flex align-items-center">
-                      <input type="range" class="form-range flex-grow-1" id="interestRate" 
-                             formControlName="interestRate" 
-                             [min]="minInterestRate" 
-                             [max]="maxInterestRate" 
+                      <input type="range" class="form-range flex-grow-1" id="interestRate"
+                             formControlName="interestRate"
+                             [min]="minInterestRate"
+                             [max]="maxInterestRate"
                              [step]="0.1">
                       <span class="interest-value ms-3">{{ formatInterestRate(simulationForm.value.interestRate) }}</span>
                     </div>
@@ -59,35 +59,35 @@
 
                 <div class="col-md-6" *ngIf="showResults && simulationResult">
                   <div class="results-container">
-                    <h3 class="results-title">Résultat de la simulation</h3>
-                    
+                    <h3 class="results-title">Simulation Results</h3>
+
                     <div class="result-item">
-                      <div class="result-label">Mensualité</div>
+                      <div class="result-label">Monthly Payment</div>
                       <div class="result-value">{{ formatAmount(simulationResult.monthlyPayment) }}</div>
                     </div>
-                    
+
                     <div class="result-item">
-                      <div class="result-label">Coût total du crédit</div>
+                      <div class="result-label">Total Loan Cost</div>
                       <div class="result-value">{{ formatAmount(simulationResult.totalAmount) }}</div>
                     </div>
-                    
+
                     <div class="result-item">
-                      <div class="result-label">Montant total des intérêts</div>
+                      <div class="result-label">Total Interest</div>
                       <div class="result-value">{{ formatAmount(simulationResult.totalInterest) }}</div>
                     </div>
-                    
+
                     <div class="actions mt-4">
                       <button type="button" class="btn btn-primary" routerLink="/loan-request">
-                        Faire une demande de prêt
+                        Apply for Loan
                       </button>
                       <button type="button" class="btn btn-outline-secondary ms-2" (click)="resetForm()">
-                        Réinitialiser
+                        Reset
                       </button>
                     </div>
                   </div>
                 </div>
               </div>
-              
+
               <div *ngIf="error" class="alert alert-danger">
                 {{ error }}
               </div>
