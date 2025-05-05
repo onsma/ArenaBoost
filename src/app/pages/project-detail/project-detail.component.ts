@@ -63,6 +63,13 @@ export class ProjectDetailComponent implements OnInit, OnDestroy {
     this.projectService.getProjectById(id).subscribe({
       next: (data) => {
         this.project = data;
+
+        // Ensure supporters_count is initialized
+        if (this.project && this.project.supporters_count === undefined) {
+          this.project.supporters_count = 0;
+        }
+
+        console.log('Loaded project with supporter count:', this.project.supporters_count);
         this.loadAnalytics(id);
       },
       error: (err) => {

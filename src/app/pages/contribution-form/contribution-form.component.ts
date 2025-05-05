@@ -95,9 +95,17 @@ export class ContributionFormComponent implements OnInit {
         this.loading = false;
         this.success = true;
 
-        // Update the project's current amount
+        // Update the project's current amount and supporter count
         if (this.project) {
           this.project.current_amount += contribution.amount;
+
+          // Initialize supporters_count if it doesn't exist
+          if (!this.project.supporters_count) {
+            this.project.supporters_count = 0;
+          }
+
+          // Increment the supporter count
+          this.project.supporters_count++;
         }
 
         // Reset form after successful submission
@@ -108,6 +116,11 @@ export class ContributionFormComponent implements OnInit {
           reward: 'Thank you message'
         });
         this.submitted = false;
+
+        // Automatically navigate back to the project detail page after 2 seconds
+        setTimeout(() => {
+          this.navigateToProject();
+        }, 2000);
       },
       error: (err) => {
         console.error('Error adding contribution:', err);

@@ -15,6 +15,7 @@ export interface Project {
   image?: string; // Matches the backend field name
   imageUrl?: string; // Keep for backward compatibility
   progressPercentage?: number; // Added for dashboard calculations
+  supporters_count?: number; // Track number of supporters
 }
 
 export enum Category {

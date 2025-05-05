@@ -65,7 +65,8 @@ export class ProjectService {
         days_remaining: 120,
         start_date: new Date('2023-10-01'),
         category: Category.Tournament,
-        image: 'https://img.freepik.com/free-photo/soccer-field-with-green-grass-night_587448-4105.jpg'
+        image: 'https://img.freepik.com/free-photo/soccer-field-with-green-grass-night_587448-4105.jpg',
+        supporters_count: 15
       },
       {
         id_project: 2,
@@ -78,7 +79,8 @@ export class ProjectService {
         days_remaining: 45,
         start_date: new Date('2023-11-15'),
         category: Category.Tournament,
-        image: 'https://img.freepik.com/free-photo/sports-tools_53876-138077.jpg'
+        image: 'https://img.freepik.com/free-photo/sports-tools_53876-138077.jpg',
+        supporters_count: 8
       },
       {
         id_project: 3,
@@ -91,7 +93,8 @@ export class ProjectService {
         days_remaining: 300,
         start_date: new Date('2023-08-01'),
         category: Category.Equipement,
-        image: 'https://img.freepik.com/free-photo/swimming-pool-beach-luxury-hotel-outdoor-pools-spa-amara-dolce-vita-luxury-hotel-resort-tekirova-kemer-turkey_146671-18751.jpg'
+        image: 'https://img.freepik.com/free-photo/swimming-pool-beach-luxury-hotel-outdoor-pools-spa-amara-dolce-vita-luxury-hotel-resort-tekirova-kemer-turkey_146671-18751.jpg',
+        supporters_count: 25
       },
       {
         id_project: 4,
@@ -104,7 +107,8 @@ export class ProjectService {
         days_remaining: 90,
         start_date: new Date('2023-12-01'),
         category: Category.Formation,
-        image: 'https://img.freepik.com/free-photo/coach-explaining-game-strategy-his-team_23-2149758138.jpg'
+        image: 'https://img.freepik.com/free-photo/coach-explaining-game-strategy-his-team_23-2149758138.jpg',
+        supporters_count: 5
       }
     ];
   }
@@ -121,8 +125,25 @@ export class ProjectService {
         }),
         catchError((error) => {
           console.warn('Backend connection failed, using mock data instead', error);
+          // Find the project in our mock data
           const mockProject = this.getMockProjects().find(p => p.id_project === id);
-          return of(mockProject || this.getMockProjects()[0]);
+
+          // If we don't have the project in our mock data, return the first one
+          if (!mockProject) {
+            return of(this.getMockProjects()[0]);
+          }
+
+          // Get the supporter count from localStorage
+          const storedSupporterCount = this.getSupporterCount(id);
+
+          // If we have a stored count, use it; otherwise use the mock count or initialize to 0
+          if (storedSupporterCount > 0) {
+            mockProject.supporters_count = storedSupporterCount;
+          } else if (!mockProject.supporters_count) {
+            mockProject.supporters_count = 0;
+          }
+
+          return of(mockProject);
         })
       );
   }
@@ -214,6 +235,8 @@ export class ProjectService {
           console.log('Contribution added successfully:', result);
           // Update the project in our local cache if we have it
           this.updateProjectAmount(projectId, contribution.amount);
+          // Increment the supporter count
+          this.incrementSupporterCount(projectId);
           // Simulate sending an email
           this.simulateSendEmail(contribution);
         }),
@@ -227,6 +250,9 @@ export class ProjectService {
 
           // Update the project in our local cache
           this.updateProjectAmount(projectId, contribution.amount);
+
+          // Increment the supporter count
+          this.incrementSupporterCount(projectId);
 
           // Simulate sending an email
           this.simulateSendEmail(contribution);
@@ -249,6 +275,44 @@ export class ProjectService {
       mockProjects[projectIndex].current_amount += amount;
       console.log(`Updated project ${projectId} current amount to ${mockProjects[projectIndex].current_amount}`);
     }
+  }
+
+  // Helper method to increment a project's supporter count
+  private incrementSupporterCount(projectId: number): void {
+    // Get the mock projects
+    const mockProjects = this.getMockProjects();
+
+    // Find the project to update
+    const projectIndex = mockProjects.findIndex(p => p.id_project === projectId);
+
+    if (projectIndex !== -1) {
+      // Initialize supporters_count if it doesn't exist
+      if (!mockProjects[projectIndex].supporters_count) {
+        mockProjects[projectIndex].supporters_count = 0;
+      }
+
+      // Increment the supporter count
+      mockProjects[projectIndex].supporters_count!++;
+      console.log(`Updated project ${projectId} supporter count to ${mockProjects[projectIndex].supporters_count}`);
+
+      // Store the updated supporter count in localStorage for persistence
+      this.storeSupporterCount(projectId, mockProjects[projectIndex].supporters_count!);
+    }
+  }
+
+  // Store supporter count in localStorage for persistence between page reloads
+  private storeSupporterCount(projectId: number, count: number): void {
+    localStorage.setItem(`project_${projectId}_supporters`, count.toString());
+    console.log(`Stored supporter count for project ${projectId}: ${count}`);
+  }
+
+  // Get supporter count from localStorage
+  private getSupporterCount(projectId: number): number {
+    const storedCount = localStorage.getItem(`project_${projectId}_supporters`);
+    if (storedCount) {
+      return parseInt(storedCount, 10);
+    }
+    return 0;
   }
 
   // Simulate sending an email to the contributor

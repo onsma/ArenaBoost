@@ -178,20 +178,14 @@
                         </div>
                         <div class="card-body">
                             <div class="row text-center mb-4">
-                                <div class="col-md-4">
-                                    <div class="mb-2">Total Funds</div>
+                                <div class="col-md-6">
+                                    <div class="mb-2">Total Funds Raised</div>
                                     <h5 class="text-success mb-0">{{
                                         formatCurrency(dashboardData.financialSnapshot.totalFunds) }}</h5>
                                 </div>
-                                <div class="col-md-4">
-                                    <div class="mb-2">Total Expenses</div>
-                                    <h5 class="text-danger mb-0">{{
-                                        formatCurrency(dashboardData.financialSnapshot.totalExpenses) }}</h5>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="mb-2">Net Funds</div>
-                                    <h5 class="text-primary mb-0">{{
-                                        formatCurrency(dashboardData.financialSnapshot.netFunds) }}</h5>
+                                <div class="col-md-6">
+                                    <div class="mb-2">Active Projects</div>
+                                    <h5 class="text-primary mb-0">{{ dashboardData.metrics.activeProjects }}</h5>
                                 </div>
                             </div>
 
@@ -229,24 +223,27 @@
                                 </div>
                             </div>
 
-                            <!-- Simple Financial Chart -->
-                            <div class="mb-4 simple-chart">
-                                <div class="simple-donut-chart">
-                                    <div class="donut-hole">
-                                        <div class="donut-value">{{ getFinancialPercentage() }}%</div>
-                                        <div class="donut-label">Available</div>
+                            <!-- Project Funding Bar Chart -->
+                            <div class="mb-4">
+                                <h6 class="mb-3">Project Funding</h6>
+                                <div class="project-funding-chart">
+                                    <div *ngFor="let project of dashboardData.topProjects.slice(0, 5)" class="mb-3">
+                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                            <span>{{ project.projectName }}</span>
+                                            <span>{{ formatCurrency(project.fundsRaised) }}</span>
+                                        </div>
+                                        <div class="progress" style="height: 20px;">
+                                            <div class="progress-bar bg-success"
+                                                [style.width.%]="getProjectFundingPercentage(project.fundsRaised)">
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="chart-legend">
-                                    <div class="legend-item">
-                                        <div class="legend-color" style="background-color: #28a745;"></div>
-                                        <div class="legend-text">Available Funds</div>
-                                    </div>
-                                    <div class="legend-item">
-                                        <div class="legend-color" style="background-color: #dc3545;"></div>
-                                        <div class="legend-text">Expenses</div>
-                                    </div>
-                                </div>
+                            </div>
+
+                            <!-- Canvas for Financial Chart (hidden) -->
+                            <div class="mb-4 d-none">
+                                <canvas id="financialChart" height="250"></canvas>
                             </div>
 
                             <h6 class="mb-3">Funds by Category</h6>
@@ -260,7 +257,7 @@
                                         [style.width.%]="getCategoryPercentage(category.amount, dashboardData.financialSnapshot.totalFunds)">
                                     </div>
                                 </div>
-                            </div>
+                            </div> 
                         </div>
                     </div>
                 </div>
@@ -324,9 +321,6 @@
                                         <div class="chart-bar-wrapper">
                                             <div class="chart-bar funds-bar" [style.height.%]="getFundsBarHeight(i)">
                                             </div>
-                                            <div class="chart-bar expenses-bar"
-                                                [style.height.%]="getExpensesBarHeight(i)">
-                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -335,11 +329,12 @@
                                         <div class="legend-color" style="background-color: #28a745;"></div>
                                         <div class="legend-text">Funds Raised</div>
                                     </div>
-                                    <div class="legend-item">
-                                        <div class="legend-color" style="background-color: #dc3545;"></div>
-                                        <div class="legend-text">Expenses</div>
-                                    </div>
                                 </div>
+                            </div>
+
+                            <!-- Canvas for Chart.js -->
+                            <div class="mt-4">
+                                <canvas id="lineChart" height="250"></canvas>
                             </div>
                         </div>
                     </div>
@@ -352,7 +347,7 @@
                             <h5 class="card-title mb-0">Project Performance Metrics</h5>
                         </div>
                         <div class="card-body">
-                            <div class="simple-radar-chart">
+                            <div class="simple-radar-chart mb-4">
                                 <div class="radar-metrics">
                                     <div class="radar-metric">
                                         <div class="metric-label">Funding</div>
@@ -390,6 +385,11 @@
                                         <div class="metric-value">80%</div>
                                     </div>
                                 </div>
+                            </div>
+
+                            <!-- Canvas for Radar Chart -->
+                            <div>
+                                <canvas id="radarChart" height="250"></canvas>
                             </div>
                         </div>
                     </div>
@@ -473,7 +473,7 @@
                             <h5 class="card-title mb-0">Project Categories</h5>
                         </div>
                         <div class="card-body">
-                            <div class="simple-category-chart">
+                            <div class="simple-category-chart mb-4">
                                 <div class="category-bars">
                                     <div class="category-bar">
                                         <div class="category-label">Tournament</div>
@@ -500,6 +500,11 @@
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+
+                            <!-- Canvas for Polar Chart -->
+                            <div>
+                                <canvas id="polarChart" height="250"></canvas>
                             </div>
                         </div>
                     </div>

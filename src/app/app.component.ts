@@ -32,7 +32,7 @@ export class AppComponent implements OnInit {
    * @returns True if the current route is the dashboard route
    */
   isDashboardRoute(): boolean {
-    const isDashboard = this.currentRoute.includes('dashboard');
+    const isDashboard = this.currentRoute === '/dashboard' || this.currentRoute.startsWith('/dashboard/');
     console.log('isDashboardRoute check:', this.currentRoute, isDashboard);
     return isDashboard;
   }

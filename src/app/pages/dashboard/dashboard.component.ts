@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { catchError, of } from 'rxjs';
@@ -22,7 +22,7 @@ import {
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent implements OnInit, AfterViewInit {
   // Register Chart.js components
   constructor(
     private projectService: ProjectService,
@@ -33,6 +33,9 @@ export class DashboardComponent implements OnInit {
     // Register all Chart.js components
     Chart.register(...registerables);
   }
+
+  // Flag to track if view is initialized
+  private viewInitialized = false;
   // Dashboard data
   dashboardData: DashboardData | null = null;
   loading = true;
@@ -420,6 +423,15 @@ export class DashboardComponent implements OnInit {
     this.loadDashboardData();
   }
 
+  ngAfterViewInit(): void {
+    this.viewInitialized = true;
+
+    // If we already have data, update the charts
+    if (this.dashboardData) {
+      this.updateCharts();
+    }
+  }
+
   loadDashboardData(): void {
     this.loading = true;
     this.error = false;
@@ -435,14 +447,10 @@ export class DashboardComponent implements OnInit {
         this.backendConnected = true;
         this.usingMockData = false;
 
-        // Try to update charts if we have data
-        try {
-          if (this.dashboardData) {
-            this.updateCharts();
-          }
-        } catch (chartError) {
-          console.error('Error updating charts:', chartError);
-          // Continue even if charts fail
+        // Update charts if view is initialized
+        if (this.dashboardData) {
+          console.log('Dashboard data loaded, updating charts');
+          this.updateCharts();
         }
 
         this.loading = false;
@@ -471,13 +479,10 @@ export class DashboardComponent implements OnInit {
         console.log('Mock dashboard data loaded successfully:', data);
         this.dashboardData = data;
 
-        // Try to update charts if we have data
-        try {
-          if (this.dashboardData) {
-            this.updateCharts();
-          }
-        } catch (chartError) {
-          console.error('Error updating charts with mock data:', chartError);
+        // Update charts if view is initialized
+        if (this.dashboardData) {
+          console.log('Mock dashboard data loaded, updating charts');
+          this.updateCharts();
         }
       },
       error: (error) => {
@@ -491,17 +496,34 @@ export class DashboardComponent implements OnInit {
   updateCharts(): void {
     if (!this.dashboardData) return;
 
-    // Create or update financial chart
-    this.createFinancialChart();
+    // Only create charts if the view is initialized
+    if (!this.viewInitialized) {
+      console.log('View not initialized yet, charts will be created after view init');
+      return;
+    }
 
-    // Create or update line chart for funding trends
-    this.createLineChart();
+    console.log('Creating charts with data:', this.dashboardData);
 
-    // Create or update radar chart for project performance
-    this.createRadarChart();
+    // Use setTimeout to ensure DOM is fully rendered
+    setTimeout(() => {
+      try {
+        // Create or update financial chart (hidden but still initialized for other charts to work)
+        this.createFinancialChart();
 
-    // Create or update polar chart for project categories
-    this.createPolarChart();
+        // Create or update line chart for funding trends
+        this.createLineChart();
+
+        // Create or update radar chart for project performance
+        this.createRadarChart();
+
+        // Create or update polar chart for project categories
+        this.createPolarChart();
+
+        console.log('All charts created successfully');
+      } catch (error) {
+        console.error('Error creating charts:', error);
+      }
+    }, 100);
   }
 
   updateProgressChart(): void {
@@ -558,8 +580,9 @@ export class DashboardComponent implements OnInit {
     }
 
     try {
-      const { totalFunds, totalExpenses, netFunds } = this.dashboardData.financialSnapshot;
-      console.log('Creating financial chart with data:', { totalFunds, totalExpenses, netFunds });
+      // Get top projects for the bar chart
+      const projects = this.dashboardData.topProjects.slice(0, 5);
+      console.log('Initializing hidden financial chart');
 
       // Destroy existing chart if it exists
       if (this.financialChart) {
@@ -569,27 +592,31 @@ export class DashboardComponent implements OnInit {
       // Get the canvas element
       const canvas = document.getElementById('financialChart') as HTMLCanvasElement;
       if (!canvas) {
-        console.error('Financial chart canvas not found');
+        console.error('Financial chart canvas not found. DOM element with id "financialChart" does not exist.');
         return;
       }
 
-      // Create the chart
+      // Create the chart - a bar chart showing funds raised by each project
       this.financialChart = new Chart(canvas, {
-        type: 'doughnut',
+        type: 'bar',
         data: {
-          labels: [
-            `Available Funds (${this.formatCurrency(netFunds)})`,
-            `Expenses (${this.formatCurrency(totalExpenses)})`
-          ],
+          labels: projects.map(p => p.projectName),
           datasets: [{
-            data: [netFunds, totalExpenses],
+            label: 'Funds Raised',
+            data: projects.map(p => p.fundsRaised),
             backgroundColor: [
-              'rgba(40, 167, 69, 0.8)',  // Green for funds
-              'rgba(220, 53, 69, 0.8)'   // Red for expenses
+              'rgba(40, 167, 69, 0.8)',   // Green
+              'rgba(23, 162, 184, 0.8)',  // Cyan
+              'rgba(201, 176, 55, 0.8)',  // Gold
+              'rgba(253, 126, 20, 0.8)',  // Orange
+              'rgba(108, 117, 125, 0.8)'  // Gray
             ],
             borderColor: [
               'rgb(40, 167, 69)',
-              'rgb(220, 53, 69)'
+              'rgb(23, 162, 184)',
+              'rgb(201, 176, 55)',
+              'rgb(253, 126, 20)',
+              'rgb(108, 117, 125)'
             ],
             borderWidth: 1
           }]
@@ -597,25 +624,23 @@ export class DashboardComponent implements OnInit {
         options: {
           responsive: true,
           maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                callback: (value) => this.formatCurrency(Number(value))
+              }
+            }
+          },
           plugins: {
             legend: {
-              display: true,
-              position: 'right',
-              labels: {
-                boxWidth: 15,
-                padding: 15,
-                font: {
-                  size: 12
-                }
-              }
+              display: false
             },
             tooltip: {
               callbacks: {
                 label: (context) => {
                   const value = context.raw as number;
-                  const total = netFunds + totalExpenses;
-                  const percentage = total > 0 ? Math.round((value / total) * 100) : 0;
-                  return `${context.label}: ${this.formatCurrency(value)} (${percentage}%)`;
+                  return `Funds Raised: ${this.formatCurrency(value)}`;
                 }
               }
             }
@@ -719,33 +744,44 @@ export class DashboardComponent implements OnInit {
         labels.push(months[monthIndex]);
       }
 
-      // Generate some realistic funding data based on total funds
-      const totalFunds = this.dashboardData.financialSnapshot.totalFunds;
-      const totalExpenses = this.dashboardData.financialSnapshot.totalExpenses;
+      // Get top projects for the line chart
+      const projects = this.dashboardData.topProjects.slice(0, 3);
 
-      // Create a growth curve for funds
-      const fundsData = [];
-      const expensesData = [];
+      // Generate datasets for each project
+      const datasets = projects.map((project, index) => {
+        // Generate some realistic funding data based on total funds
+        const totalFunds = project.fundsRaised;
+        const fundsData = [];
 
-      // Start with some initial values
-      let currentFunds = totalFunds * 0.4; // Start at 40% of total
-      let currentExpenses = totalExpenses * 0.3; // Start at 30% of total
+        // Start with some initial value
+        let currentFunds = totalFunds * 0.4; // Start at 40% of total
 
-      for (let i = 0; i < 6; i++) {
-        // Add some randomness to the growth
-        const fundGrowth = 1 + (Math.random() * 0.2); // 0-20% growth
-        const expenseGrowth = 1 + (Math.random() * 0.15); // 0-15% growth
+        for (let i = 0; i < 6; i++) {
+          // Add some randomness to the growth
+          const fundGrowth = 1 + (Math.random() * 0.2); // 0-20% growth
+          currentFunds = currentFunds * fundGrowth;
 
-        currentFunds = currentFunds * fundGrowth;
-        currentExpenses = currentExpenses * expenseGrowth;
+          // Ensure we don't exceed the total
+          currentFunds = Math.min(currentFunds, totalFunds);
+          fundsData.push(Math.round(currentFunds));
+        }
 
-        // Ensure we don't exceed the totals
-        currentFunds = Math.min(currentFunds, totalFunds);
-        currentExpenses = Math.min(currentExpenses, totalExpenses);
+        // Get color for this project
+        const color = this.getProjectColor(index);
 
-        fundsData.push(Math.round(currentFunds));
-        expensesData.push(Math.round(currentExpenses));
-      }
+        return {
+          label: project.projectName,
+          data: fundsData,
+          borderColor: color,
+          backgroundColor: color.replace('rgb', 'rgba').replace(')', ', 0.2)'),
+          pointBackgroundColor: color,
+          pointBorderColor: '#fff',
+          pointHoverBackgroundColor: '#fff',
+          pointHoverBorderColor: color,
+          tension: 0.4,
+          fill: true
+        };
+      });
 
       // Destroy existing chart if it exists
       if (this.lineChart) {
@@ -755,41 +791,19 @@ export class DashboardComponent implements OnInit {
       // Get the canvas element
       const canvas = document.getElementById('lineChart') as HTMLCanvasElement;
       if (!canvas) {
-        console.error('Line chart canvas not found');
+        console.error('Line chart canvas not found. DOM element with id "lineChart" does not exist.');
+        console.log('Available canvas elements:', document.querySelectorAll('canvas'));
         return;
       }
+
+      console.log('Found line chart canvas:', canvas);
 
       // Create the chart
       this.lineChart = new Chart(canvas, {
         type: 'line',
         data: {
           labels: labels,
-          datasets: [
-            {
-              label: 'Funds Raised',
-              data: fundsData,
-              borderColor: 'rgba(40, 167, 69, 1)',
-              backgroundColor: 'rgba(40, 167, 69, 0.2)',
-              pointBackgroundColor: 'rgba(40, 167, 69, 1)',
-              pointBorderColor: '#fff',
-              pointHoverBackgroundColor: '#fff',
-              pointHoverBorderColor: 'rgba(40, 167, 69, 1)',
-              tension: 0.4,
-              fill: true
-            },
-            {
-              label: 'Expenses',
-              data: expensesData,
-              borderColor: 'rgba(220, 53, 69, 1)',
-              backgroundColor: 'rgba(220, 53, 69, 0.2)',
-              pointBackgroundColor: 'rgba(220, 53, 69, 1)',
-              pointBorderColor: '#fff',
-              pointHoverBackgroundColor: '#fff',
-              pointHoverBorderColor: 'rgba(220, 53, 69, 1)',
-              tension: 0.4,
-              fill: true
-            }
-          ]
+          datasets: datasets
         },
         options: {
           responsive: true,
@@ -870,9 +884,12 @@ export class DashboardComponent implements OnInit {
       // Get the canvas element
       const canvas = document.getElementById('radarChart') as HTMLCanvasElement;
       if (!canvas) {
-        console.error('Radar chart canvas not found');
+        console.error('Radar chart canvas not found. DOM element with id "radarChart" does not exist.');
+        console.log('Available canvas elements:', document.querySelectorAll('canvas'));
         return;
       }
+
+      console.log('Found radar chart canvas:', canvas);
 
       // Create the chart
       this.radarChart = new Chart(canvas, {
@@ -979,9 +996,12 @@ export class DashboardComponent implements OnInit {
       // Get the canvas element
       const canvas = document.getElementById('polarChart') as HTMLCanvasElement;
       if (!canvas) {
-        console.error('Polar chart canvas not found');
+        console.error('Polar chart canvas not found. DOM element with id "polarChart" does not exist.');
+        console.log('Available canvas elements:', document.querySelectorAll('canvas'));
         return;
       }
+
+      console.log('Found polar chart canvas:', canvas);
 
       // Create the chart
       this.polarChart = new Chart(canvas, {
@@ -1198,15 +1218,29 @@ export class DashboardComponent implements OnInit {
     return colors[index % colors.length];
   }
 
-  // Helper method to get project trend
-  getProjectTrend(projectIndex: number): number {
-    // Sample data - in a real app, this would come from the backend
-    const trends = [15, -5, 22];
-
-    if (projectIndex < trends.length) {
-      return trends[projectIndex];
+  // Helper method to calculate project funding percentage for bar chart
+  getProjectFundingPercentage(fundsRaised: number): number {
+    if (!this.dashboardData || !this.dashboardData.topProjects || this.dashboardData.topProjects.length === 0) {
+      return 0;
     }
 
-    return 0;
+    // Find the maximum funds raised among all projects to use as the 100% mark
+    const maxFunds = Math.max(...this.dashboardData.topProjects.map(p => p.fundsRaised));
+
+    if (maxFunds <= 0) {
+      return 0;
+    }
+
+    // Calculate percentage based on the maximum funds
+    return Math.round((fundsRaised / maxFunds) * 100);
   }
+
+  // Helper method to get project trend (for financial evolution)
+  getProjectTrend(projectIndex: number): number {
+    // Sample data - in a real app, this would come from the backend
+    const trends = [15, -5, 10, 8, -3];
+    return trends[projectIndex] || 0;
+  }
+
+  // No additional methods needed
 }
