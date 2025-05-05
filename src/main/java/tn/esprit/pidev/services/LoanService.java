@@ -74,9 +74,72 @@ public class LoanService {
             existingLoan.setRefund_duration(loanDetails.getRefund_duration());
             existingLoan.setStatus(loanDetails.getStatus());
 
+            System.out.println("Dans updateLoan - Statut à mettre à jour: " + loanDetails.getStatus());
+
             Loan updatedLoan = loanRepository.save(existingLoan);
 
             // 📩 Envoi automatique d'un e-mail au demandeur du prêt
+            mailService.envoyerNotificationLoan(updatedLoan);
+
+            return updatedLoan;
+        }).orElseThrow(() -> new RuntimeException("Prêt non trouvé avec l'ID : " + id));
+    }
+
+    /**
+     * Met à jour uniquement le statut d'un prêt
+     * @param id L'ID du prêt à mettre à jour
+     * @param statusStr Le nouveau statut (en chaîne de caractères)
+     * @return Le prêt mis à jour
+     */
+    @Transactional
+    public Loan updateLoanStatus(Long id, String statusStr) {
+        System.out.println("Tentative de mise à jour du statut du prêt #" + id + " vers: " + statusStr);
+
+        return loanRepository.findById(id).map(existingLoan -> {
+            // Déterminer le nouveau statut en fonction de la chaîne reçue
+            Status newStatus;
+
+            // Convertir en minuscules et supprimer les espaces
+            String cleanStatusStr = statusStr.toLowerCase().trim();
+
+            // Traiter explicitement chaque valeur possible
+            switch (cleanStatusStr) {
+                case "pending":
+                case "en attente":
+                    newStatus = Status.pending;
+                    break;
+                case "approved":
+                case "approuvé":
+                case "approuve":
+                    newStatus = Status.approved;
+                    break;
+                case "rejected":
+                case "rejeté":
+                case "rejete":
+                    newStatus = Status.rejected;
+                    break;
+                case "completed":
+                case "complété":
+                case "complete":
+                case "payé":
+                case "paye":
+                    newStatus = Status.completed;
+                    break;
+                default:
+                    System.err.println("Statut non reconnu: " + statusStr);
+                    throw new RuntimeException("Statut non reconnu: " + statusStr);
+            }
+
+            System.out.println("Statut converti avec succès: " + newStatus);
+
+            // Mettre à jour le statut
+            existingLoan.setStatus(newStatus);
+
+            // Enregistrer les modifications
+            Loan updatedLoan = loanRepository.save(existingLoan);
+            System.out.println("Prêt mis à jour avec succès, nouveau statut: " + updatedLoan.getStatus());
+
+            // Envoi d'un e-mail
             mailService.envoyerNotificationLoan(updatedLoan);
 
             return updatedLoan;

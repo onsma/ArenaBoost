@@ -151,4 +151,18 @@ public class DashboardController {
 
         return ResponseEntity.ok(activeUsers);
     }
+    // Endpoint pour récupérer le nombre de prêts par type
+    @GetMapping("/loan-type-stats")
+    public ResponseEntity<Map<String, Long>> getLoanTypeStatistics() {
+        List<Loan> loans = loanService.getAllLoans(); // Récupère tous les prêts depuis le service
+
+        // Compte les prêts pour chaque type
+        Map<String, Long> loanTypeStats = loans.stream()
+                .collect(Collectors.groupingBy(
+                        loan -> loan.getLoantype().toString(), // Si LoanType est une enum
+                        Collectors.counting()
+                ));
+
+        return ResponseEntity.ok(loanTypeStats);
+    }
 }
