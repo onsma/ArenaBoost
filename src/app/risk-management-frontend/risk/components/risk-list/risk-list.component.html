@@ -1,0 +1,56 @@
+<div class="container">
+    <h2>Risk List</h2>
+    <button mat-raised-button color="primary" (click)="downloadReport()">Download Risk Report</button>
+    <button mat-raised-button color="primary" [routerLink]="['/risk/add']">Add Risk</button>
+  
+    <!-- Loading Spinner -->
+    <div *ngIf="isLoading" class="loading">
+      <mat-spinner diameter="50"></mat-spinner>
+    </div>
+  
+    <!-- Table -->
+    <div *ngIf="!isLoading">
+      <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+        <ng-container matColumnDef="risk_id">
+          <th mat-header-cell *matHeaderCellDef>ID</th>
+          <td mat-cell *matCellDef="let risk">{{ risk.risk_id }}</td>
+        </ng-container>
+        <ng-container matColumnDef="score">
+          <th mat-header-cell *matHeaderCellDef>Score</th>
+          <td mat-cell *matCellDef="let risk">{{ risk.score }}</td>
+        </ng-container>
+        <ng-container matColumnDef="probability">
+          <th mat-header-cell *matHeaderCellDef>Probability</th>
+          <td mat-cell *matCellDef="let risk">{{ risk.probability }}</td>
+        </ng-container>
+        <ng-container matColumnDef="impact">
+          <th mat-header-cell *matHeaderCellDef>Impact</th>
+          <td mat-cell *matCellDef="let risk">{{ risk.impact }}</td>
+        </ng-container>
+        <ng-container matColumnDef="risktype">
+          <th mat-header-cell *matHeaderCellDef>Risk Type</th>
+          <td mat-cell *matCellDef="let risk">{{ risk.risktype }}</td>
+        </ng-container>
+        <ng-container matColumnDef="amount">
+          <th mat-header-cell *matHeaderCellDef>Amount</th>
+          <td mat-cell *matCellDef="let risk">{{ risk.amount }}</td>
+        </ng-container>
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Actions</th>
+          <td mat-cell *matCellDef="let risk">
+            <button mat-button color="accent" (click)="calculateScore(risk.risk_id)">Calculate Score</button>
+            <button mat-button color="warn" (click)="checkRisk(risk.risk_id)">Check & Notify</button>
+            <button mat-button color="primary" (click)="editRisk(risk)">Edit</button>
+            <button mat-button color="warn" (click)="deleteRisk(risk.risk_id)">Delete</button>
+          </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+  
+      <!-- No Data Message -->
+      <div *ngIf="!dataSource.data.length" class="no-data">
+        <p>No risks available.</p>
+      </div>
+    </div>
+  </div>
