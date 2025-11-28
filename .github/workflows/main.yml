@@ -1,0 +1,30 @@
+name: PMD Analysis
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  pmd:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install PMD
+        run: |
+          wget https://github.com/pmd/pmd/releases/download/pmd_releases/7.18.0/pmd-dist-7.18.0-bin.zip
+          unzip pmd-dist-7.18.0-bin.zip
+
+      - name: Run PMD
+        run: |
+          pmd-bin-7.18.0/bin/pmd check -d src/main/java -R rulesets/java/quickstart.xml -f xml -r pmd-report.xml
+
+      - name: Upload PMD Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: pmd-report
+          path: pmd-report.xml
