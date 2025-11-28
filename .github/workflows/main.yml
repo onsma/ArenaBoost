@@ -12,7 +12,7 @@ jobs:
     
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install PMD
         run: |
@@ -21,10 +21,14 @@ jobs:
 
       - name: Run PMD
         run: |
-          pmd-bin-7.18.0/bin/pmd check -d src/main/java -R rulesets/java/quickstart.xml -f xml -r pmd-report.xml
+          pmd-bin-7.18.0/bin/pmd check \
+            -d src/main/java \
+            -R rulesets/java/quickstart.xml \
+            -f xml \
+            -r pmd-report.xml
 
-      - name: Upload PMD Report
-        uses: actions/upload-artifact@v3
+      - name: Upload PMD Report Artifact
+        uses: actions/upload-artifact@v4
         with:
           name: pmd-report
           path: pmd-report.xml
